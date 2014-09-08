@@ -205,6 +205,8 @@ public:
 			break;
 		case SIGNAL_Y: // 50
 			if(!m_stepA || !m_stepS) // A“_¥S“_‚Å‚È‚¢
+			// ª‚±‚±‚Í (!m_stepA && !m_stepS) ‚©‚à‚µ‚ê‚È‚¢
+			// add 2014/09/08 22:52
 			{
 				if(speed > SPEED_Y){m_result_sig = ATSEB_LIMIT;}
 				else{m_result_sig = ATSEB_NONE;}
