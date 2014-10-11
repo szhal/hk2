@@ -1,4 +1,4 @@
-// ã‹}“d“S VŒ^ATS
+// é˜ªæ€¥é›»é‰„ æ–°å‹ATS
 // Copyright (C) 2009 Unicorn
 
 #ifndef ATS_HK_HPP_INCLUDED
@@ -29,17 +29,17 @@
 #define LIMIT_20 5 // 20km/h / 0Hz NOSIGNAL
 #define LIMIT_20R 6 // 20km/h + OVEREB / 30Hz
 
-#define ATSEB_NONE 0 // ATSƒtƒŠ[
-#define ATSEB_LIMIT 1 // ATSŒ¸‘¬ŒãŠÉ‰ğ
-#define ATSEB_STOP 2 // ATSâ‘Î’â~
+#define ATSEB_NONE 0 // ATSãƒ•ãƒªãƒ¼
+#define ATSEB_LIMIT 1 // ATSæ¸›é€Ÿå¾Œç·©è§£
+#define ATSEB_STOP 2 // ATSçµ¶å¯¾åœæ­¢
 
-#define ROUTE_HANKYU 0 // ã‹}ü
-#define ROUTE_HANSHIN 1 // ã_ü
-#define ROUTE_SANYOU 2 // R—zü
+#define ROUTE_HANKYU 0 // é˜ªæ€¥ç·š
+#define ROUTE_HANSHIN 1 // é˜ªç¥ç·š
+#define ROUTE_SANYOU 2 // å±±é™½ç·š
 
-// #define MAX_SPEED 115+1 // Å‚‘¬“x
+// #define MAX_SPEED 115+1 // æœ€é«˜é€Ÿåº¦
 
-#define IND_C 0 // “§‰ß
+#define IND_C 0 // é€é
 #define IND_0 1 // 0
 #define IND_20 2 // 20
 #define IND_30 3 // 30
@@ -47,59 +47,59 @@
 #define IND_70 5 // 70
 #define IND_80 6 // 80
 #define IND_F 7 // F
-#define IND_R50 8 // Ô50<“_–Å>
-#define IND_R70 9 // Ô70<“_–Å>
-#define IND_R80 10 // Ô80<“_–Å>
-#define IND_RF 11 // ÔF<“_–Å>
+#define IND_R50 8 // èµ¤50<ç‚¹æ»…>
+#define IND_R70 9 // èµ¤70<ç‚¹æ»…>
+#define IND_R80 10 // èµ¤80<ç‚¹æ»…>
+#define IND_RF 11 // èµ¤F<ç‚¹æ»…>
 #define IND_P 12 // P
 
 class CHk
 {
 private:
-	int m_door; // ƒhƒAó‘Ô
-	int m_signal; // M†Œ»¦
-	int m_limitSpeed; // Å‚‘¬“x
+	int m_door; // ãƒ‰ã‚¢çŠ¶æ…‹
+	int m_signal; // ä¿¡å·ç¾ç¤º
+	int m_limitSpeed; // æœ€é«˜é€Ÿåº¦
 
-	int m_stepA; // •Â‚»‚­“àA“_‚Ìó‘Ô
-	// int m_stepT; // •Â‚»‚­“àT“_‚Ìó‘Ô
-	int m_stepS; // •Â‚»‚­“àS“_‚Ìó‘Ô
-	int m_flat15; // “üŠ·ƒ‚[ƒh15km/hÆ¸
+	int m_stepA; // é–‰ããå†…Aç‚¹ã®çŠ¶æ…‹
+	// int m_stepT; // é–‰ããå†…Tç‚¹ã®çŠ¶æ…‹
+	int m_stepS; // é–‰ããå†…Sç‚¹ã®çŠ¶æ…‹
+	int m_flat15; // å…¥æ›ãƒ¢ãƒ¼ãƒ‰15km/hç…§æŸ»
 
-	int m_hPat; // ‚‘¬ƒpƒ^[ƒ“ó‘Ô
-	int m_lPat; // ’á‘¬ƒpƒ^[ƒ“ó‘Ô
-	int m_limit; // VA“_§ŒÀó‘Ô
+	int m_hPat; // é«˜é€Ÿãƒ‘ã‚¿ãƒ¼ãƒ³çŠ¶æ…‹
+	int m_lPat; // ä½é€Ÿãƒ‘ã‚¿ãƒ¼ãƒ³çŠ¶æ…‹
+	int m_limit; // æ–°Aç‚¹åˆ¶é™çŠ¶æ…‹
 
-	float m_distHp; // ‚‘¬ƒpƒ^[ƒ“~‰º‚Ü‚Å‚Ì‹——£[m]
-	float m_distLp; // ’á‘¬ƒpƒ^[ƒ“~‰º‚Ü‚Å‚Ì‹——£[m]
+	float m_distHp; // é«˜é€Ÿãƒ‘ã‚¿ãƒ¼ãƒ³é™ä¸‹ã¾ã§ã®è·é›¢[m]
+	float m_distLp; // ä½é€Ÿãƒ‘ã‚¿ãƒ¼ãƒ³é™ä¸‹ã¾ã§ã®è·é›¢[m]
 
-	int m_result_sig; // M†Æ¸‚ÌŒ‹‰Ê
-	int m_result_lim; // VA“_Æ¸‚ÌŒ‹‰Ê
+	int m_result_sig; // ä¿¡å·ç…§æŸ»ã®çµæœ
+	int m_result_lim; // æ–°Aç‚¹ç…§æŸ»ã®çµæœ
 
-	int m_leaveAccept; // o”­³”F‡}
-	int m_leaveAcceptTime; // o”­³”F‡}‚Ü‚Å‚ÌŠÔ
-	int m_tmrLeaveAccept; // o”­³”F‡}ƒ^ƒCƒ}[
+	int m_leaveAccept; // å‡ºç™ºæ‰¿èªåˆå›³
+	int m_leaveAcceptTime; // å‡ºç™ºæ‰¿èªåˆå›³ã¾ã§ã®æ™‚é–“
+	int m_tmrLeaveAccept; // å‡ºç™ºæ‰¿èªåˆå›³ã‚¿ã‚¤ãƒãƒ¼
 
-	int m_beginPattern; // ƒpƒ^[ƒ“”­¶
-	int m_confirmBuzz; // Šm”Fƒ‚[ƒhƒuƒU[
-	int m_replaceSw; // “üŠ·ƒXƒCƒbƒ`
+	int m_beginPattern; // ãƒ‘ã‚¿ãƒ¼ãƒ³ç™ºç”Ÿ
+	int m_confirmBuzz; // ç¢ºèªãƒ¢ãƒ¼ãƒ‰ãƒ–ã‚¶ãƒ¼
+	int m_replaceSw; // å…¥æ›ã‚¹ã‚¤ãƒƒãƒ
 
-	// o”­³”F‡}ƒ^ƒCƒ}[
+	// å‡ºç™ºæ‰¿èªåˆå›³ã‚¿ã‚¤ãƒãƒ¼
 	int leaveAcceptTimer()
 	{
 		int is_keep = 1;
 
 		if(*Time > m_tmrLeaveAccept)
 		{
-			is_keep = 0; // ƒŠƒZƒbƒg‚·‚é
+			is_keep = 0; // ãƒªã‚»ãƒƒãƒˆã™ã‚‹
 		}
 
 		return is_keep;
 	}
 
-	// •\¦“”‚ğƒŠƒZƒbƒg‚·‚é
+	// è¡¨ç¤ºç¯ã‚’ãƒªã‚»ãƒƒãƒˆã™ã‚‹
 	void resetIndicator()
 	{
-		Indicator = 0; // •\¦ŠíƒVƒtƒg
+		Indicator = 0; // è¡¨ç¤ºå™¨ã‚·ãƒ•ãƒˆ
 		Ats_0 = 0; // 0
 		Ats_20 = 0; // 20
 		Ats_30 = 0; // 30
@@ -107,55 +107,55 @@ private:
 		Ats_70 = 0; // 70
 		Ats_80 = 0; // 80
 		Ats_F = 0; // F
-		Ats_R50 = 0; //Ô50<“_–Å>
-		Ats_R70 = 0; // Ô70<“_–Å>
-		Ats_R80 = 0; // Ô80<“_–Å>
-		Ats_RF = 0; // ÔF<“_–Å>
+		Ats_R50 = 0; //èµ¤50<ç‚¹æ»…>
+		Ats_R70 = 0; // èµ¤70<ç‚¹æ»…>
+		Ats_R80 = 0; // èµ¤80<ç‚¹æ»…>
+		Ats_RF = 0; // èµ¤F<ç‚¹æ»…>
 		Ats_P = 0; // P
 		Ats_N = 0; // N
 		Ats_HP = 0; // HP
 	}
 
 public:
-	int EmgBrake; // ”ñíƒmƒbƒ`
-	int SvcBrake; // í—pÅ‘åƒmƒbƒ`
+	int EmgBrake; // éå¸¸ãƒãƒƒãƒ
+	int SvcBrake; // å¸¸ç”¨æœ€å¤§ãƒãƒƒãƒ
 
-	int *BrakeNotch; // ƒuƒŒ[ƒLƒmƒbƒ`
-	int *Reverser; // ƒŒƒo[ƒT
-	int *Time; // Œ»İ[s]
-	float *TrainSpeed; // ‘¬“xŒv‚Ì‘¬“x[km/h]
-	int *DeltaT; // ƒtƒŒ[ƒ€ŠÔ[flame/ms]
+	int *BrakeNotch; // ãƒ–ãƒ¬ãƒ¼ã‚­ãƒãƒƒãƒ
+	int *Reverser; // ãƒ¬ãƒãƒ¼ã‚µ
+	int *Time; // ç¾åœ¨æ™‚åˆ»[s]
+	float *TrainSpeed; // é€Ÿåº¦è¨ˆã®é€Ÿåº¦[km/h]
+	int *DeltaT; // ãƒ•ãƒ¬ãƒ¼ãƒ æ™‚é–“[flame/ms]
 
-	int AtsBrake; // ATSƒuƒŒ[ƒL
-	int Route; // –‹ÆÒ
+	int AtsBrake; // ATSãƒ–ãƒ¬ãƒ¼ã‚­
+	int Route; // äº‹æ¥­è€…
 
-	int Indicator; // •\¦ŠíƒVƒtƒg(0`12)
-	// “§‰ß-0-20-30-50-70-80-F-Ô50-Ô70-Ô80-ÔF-P(Ô‚Å‚Í“_–Å)
+	int Indicator; // è¡¨ç¤ºå™¨ã‚·ãƒ•ãƒˆ(0ï½12)
+	// é€é-0-20-30-50-70-80-F-èµ¤50-èµ¤70-èµ¤80-èµ¤F-P(èµ¤ã§ã¯ç‚¹æ»…)
 
 	int Ats_P; // P
 	int Ats_0; // 0
 	int Ats_20; // 20
 	int Ats_30; // 30
 	int Ats_50; // 50
-	int Ats_R50; //Ô50<“_–Å>
+	int Ats_R50; //èµ¤50<ç‚¹æ»…>
 	int Ats_70; // 70
-	int Ats_R70; // Ô70<“_–Å>
+	int Ats_R70; // èµ¤70<ç‚¹æ»…>
 	int Ats_80; // 80
-	int Ats_R80; // Ô80<“_–Å>
+	int Ats_R80; // èµ¤80<ç‚¹æ»…>
 	int Ats_F; // F
-	int Ats_RF; // ÔF<“_–Å>
+	int Ats_RF; // èµ¤F<ç‚¹æ»…>
 	int Ats_N; // N
 	int Ats_HP; // HP
 
-	int Confirm; // Šm”F
-	int Replace; // “üŠ·
+	int Confirm; // ç¢ºèª
+	int Replace; // å…¥æ›
 
-	int BeginPattern; // ƒpƒ^[ƒ“”­¶
-	int ConfirmBuzz; // Šm”Fƒ‚[ƒhƒuƒU[
-	int SpeedOverBuzz; // ‘¬“x’´‰ßƒuƒU[
-	int ReplaceSw; // “üŠ·ƒXƒCƒbƒ`
+	int BeginPattern; // ãƒ‘ã‚¿ãƒ¼ãƒ³ç™ºç”Ÿ
+	int ConfirmBuzz; // ç¢ºèªãƒ¢ãƒ¼ãƒ‰ãƒ–ã‚¶ãƒ¼
+	int SpeedOverBuzz; // é€Ÿåº¦è¶…éãƒ–ã‚¶ãƒ¼
+	int ReplaceSw; // å…¥æ›ã‚¹ã‚¤ãƒƒãƒ
 
-	// Initalize‚ÅÀs‚·‚é
+	// Initalizeã§å®Ÿè¡Œã™ã‚‹
 	void initialize()
 	{
 		AtsBrake = 0;
@@ -179,21 +179,21 @@ public:
 		m_replaceSw = ATS_SOUND_STOP;
 	}
 
-	// Elapse‚ÅÀs‚·‚é
+	// Elapseã§å®Ÿè¡Œã™ã‚‹
 	void execute()
 	{
-		float speed = fabsf(*TrainSpeed); // ‘¬“x‚Ìâ‘Î’l[km/h]
-		//float def = speed / 3600 * *DeltaT; // 1ƒtƒŒ[ƒ€‚Å“®‚¢‚½‹——£(â‘Î’l)[m]
-		float def = *TrainSpeed / 3600 * *DeltaT; // 1ƒtƒŒ[ƒ€‚Å“®‚¢‚½‹——£(â‘Î’l)[m]
-		// 2012/08/14 ‹——£‚ÌŒvZ•û–@•ÏX ‘¬“x‚Ìâ‘Î’l‚ğg‚í‚È‚¢•û®
+		float speed = fabsf(*TrainSpeed); // é€Ÿåº¦ã®çµ¶å¯¾å€¤[km/h]
+		//float def = speed / 3600 * *DeltaT; // 1ãƒ•ãƒ¬ãƒ¼ãƒ ã§å‹•ã„ãŸè·é›¢(çµ¶å¯¾å€¤)[m]
+		float def = *TrainSpeed / 3600 * *DeltaT; // 1ãƒ•ãƒ¬ãƒ¼ãƒ ã§å‹•ã„ãŸè·é›¢(çµ¶å¯¾å€¤)[m]
+		// 2012/08/14 è·é›¢ã®è¨ˆç®—æ–¹æ³•å¤‰æ›´ é€Ÿåº¦ã®çµ¶å¯¾å€¤ã‚’ä½¿ã‚ãªã„æ–¹å¼
 
-		int blink = (*Time % 1000) / 500; // •\¦“”“_–Å(0.5s)
+		int blink = (*Time % 1000) / 500; // è¡¨ç¤ºç¯ç‚¹æ»…(0.5s)
 
-		// M†‚É‚æ‚éÆ¸
+		// ä¿¡å·ã«ã‚ˆã‚‹ç…§æŸ»
 		switch(m_signal)
 		{
-		case SIGNAL_G: // ƒtƒŠ[ƒ‰ƒ“
-			if(!m_stepA) // A“_‚Å‚È‚¢
+		case SIGNAL_G: // ãƒ•ãƒªãƒ¼ãƒ©ãƒ³
+			if(!m_stepA) // Aç‚¹ã§ãªã„
 			{
 				if(speed > m_limitSpeed+1){m_result_sig = ATSEB_LIMIT;}
 				else{m_result_sig = ATSEB_NONE;}
@@ -204,8 +204,10 @@ public:
 			else{m_result_sig = ATSEB_NONE;}
 			break;
 		case SIGNAL_Y: // 50
-			if(!m_stepA || !m_stepS) // A“_¥S“_‚Å‚È‚¢
-			// ª‚±‚±‚Í (!m_stepA && !m_stepS) ‚©‚à‚µ‚ê‚È‚¢
+			if(!m_stepA && !m_stepS) // Aç‚¹ï½¥Sç‚¹ã§ãªã„
+			// add szhal 2014/10/11
+			//if(!m_stepA || !m_stepS) // Aç‚¹ï½¥Sç‚¹ã§ãªã„
+			// â†‘ã“ã“ã¯ (!m_stepA && !m_stepS) ã‹ã‚‚ã—ã‚Œãªã„
 			// add 2014/09/08 22:52
 			{
 				if(speed > SPEED_Y){m_result_sig = ATSEB_LIMIT;}
@@ -213,11 +215,11 @@ public:
 				break;
 			}
 		case SIGNAL_YY: // 30
-			if(!m_stepS) // S“_‚Å‚È‚¢
+			if(!m_stepS) // Sç‚¹ã§ãªã„
 			{
 				if(speed > SPEED_YY){m_result_sig = ATSEB_STOP;}
 			}
-			else // S“_20
+			else // Sç‚¹20
 			{
 				if(speed > 20+1){m_result_sig = ATSEB_STOP;}
 			}
@@ -233,33 +235,33 @@ public:
 			break;
 		}
 
-		// ‚‘¬ƒpƒ^[ƒ“‚É‚æ‚éÆ¸
+		// é«˜é€Ÿãƒ‘ã‚¿ãƒ¼ãƒ³ã«ã‚ˆã‚‹ç…§æŸ»
 		if(m_hPat)
 		{
-			m_distHp -= def; // c‚è‹——£‚ğŒ¸Z‚·‚é
-			float pattern = speed * speed / 19.5F; // ƒpƒ^[ƒ“‘¬“x
-			if(pattern >= m_distHp){m_result_sig = ATSEB_LIMIT;} // ƒuƒŒ[ƒL“®ì
-			else{m_result_sig = ATSEB_NONE;} // Œ¸‘¬ŒãŠÉ‰ğ
+			m_distHp -= def; // æ®‹ã‚Šè·é›¢ã‚’æ¸›ç®—ã™ã‚‹
+			float pattern = speed * speed / 19.5F; // ãƒ‘ã‚¿ãƒ¼ãƒ³é€Ÿåº¦
+			if(pattern >= m_distHp){m_result_sig = ATSEB_LIMIT;} // ãƒ–ãƒ¬ãƒ¼ã‚­å‹•ä½œ
+			else{m_result_sig = ATSEB_NONE;} // æ¸›é€Ÿå¾Œç·©è§£
 
-			// Œù”z‚²‚Æ‚Éƒpƒ^[ƒ“’è‹`‚ğ•Ï‚¦‚é
-			// float pattern = speed * speed / (Decelation * CONST_HP0); // ƒpƒ^[ƒ“‘¬“x
+			// å‹¾é…ã”ã¨ã«ãƒ‘ã‚¿ãƒ¼ãƒ³å®šç¾©ã‚’å¤‰ãˆã‚‹
+			// float pattern = speed * speed / (Decelation * CONST_HP0); // ãƒ‘ã‚¿ãƒ¼ãƒ³é€Ÿåº¦
 
-			// HP‚Íİ’è‹——£598m‚Ì8Š„‘–s(478.4m/-119.6m)‚©‚Â’â~ŒŸ’m‚ÅƒŠƒZƒbƒg
+			// HPã¯è¨­å®šè·é›¢598mã®8å‰²èµ°è¡Œ(478.4m/-119.6m)ã‹ã¤åœæ­¢æ¤œçŸ¥ã§ãƒªã‚»ãƒƒãƒˆ
 			if(m_distHp < 119.6F && m_distHp >= 10.0F && speed == 0)
 			{
 				m_hPat = 0;
 			}
 		}
 
-		// ’á‘¬ƒpƒ^[ƒ“‚É‚æ‚éÆ¸
+		// ä½é€Ÿãƒ‘ã‚¿ãƒ¼ãƒ³ã«ã‚ˆã‚‹ç…§æŸ»
 		if(m_lPat)
 		{
-			m_distLp -= def; // c‚è‹——£‚ğŒ¸Z‚·‚é
-			float pattern = speed * speed / 19.5F; // ƒpƒ^[ƒ“‘¬“x
-			if(pattern >= m_distLp){m_result_sig = ATSEB_STOP;} // ƒuƒŒ[ƒL“®ì
+			m_distLp -= def; // æ®‹ã‚Šè·é›¢ã‚’æ¸›ç®—ã™ã‚‹
+			float pattern = speed * speed / 19.5F; // ãƒ‘ã‚¿ãƒ¼ãƒ³é€Ÿåº¦
+			if(pattern >= m_distLp){m_result_sig = ATSEB_STOP;} // ãƒ–ãƒ¬ãƒ¼ã‚­å‹•ä½œ
 		}
 
-		// VA“_‚É‚æ‚éÆ¸
+		// æ–°Aç‚¹ã«ã‚ˆã‚‹ç…§æŸ»
 		switch(m_limit)
 		{
 		case LIMIT_20R:
@@ -290,21 +292,21 @@ public:
 			break;
 		}
 
-		// •\¦“”‚ğƒŠƒZƒbƒg
+		// è¡¨ç¤ºç¯ã‚’ãƒªã‚»ãƒƒãƒˆ
 		resetIndicator();
 
-		// M†‚É‚æ‚é•\¦“”
+		// ä¿¡å·ã«ã‚ˆã‚‹è¡¨ç¤ºç¯
 		switch(m_signal)
 		{
 		case SIGNAL_G:
-			if(m_hPat) // ‚‘¬ƒpƒ^[ƒ“
+			if(m_hPat) // é«˜é€Ÿãƒ‘ã‚¿ãƒ¼ãƒ³
 			{
-				if(!m_door || m_distHp < 10.0F) // ƒI[ƒo[‚ÅN‚ÉˆÚs
+				if(!m_door || m_distHp < 10.0F) // ã‚ªãƒ¼ãƒãƒ¼ã§Nã«ç§»è¡Œ
 				{
 					Indicator = IND_C;
 					Ats_N = m_leaveAccept; // N
 				}
-				else // ÔF
+				else // èµ¤F
 				{
 					Indicator = blink ? IND_RF : IND_C;
 					Ats_RF = 1;
@@ -312,7 +314,7 @@ public:
 				}
 				break;
 			}
-			else if(!m_stepA) // ƒtƒŠ[ƒ‰ƒ“(A“_‚Å‚È‚¢)
+			else if(!m_stepA) // ãƒ•ãƒªãƒ¼ãƒ©ãƒ³(Aç‚¹ã§ãªã„)
 			{
 				Indicator = IND_F;
 				Ats_F = 1;
@@ -323,21 +325,21 @@ public:
 			Ats_70 = 1;
 			break;
 		case SIGNAL_Y: // 50
-			if(!m_stepA || !m_stepS) // A“_¥S“_‚Å‚È‚¢
+			if(!m_stepA || !m_stepS) // Aç‚¹ï½¥Sç‚¹ã§ãªã„
 			{
 				Indicator = IND_50;
 				Ats_50 = 1;
 				break;
 			}
 		case SIGNAL_YY: // 30
-			if(!m_stepS) // S“_‚Å‚È‚¢
+			if(!m_stepS) // Sç‚¹ã§ãªã„
 			{
 				Indicator = IND_30;
 				Ats_30 = 1;
 			}
 			else // 20
 			{
-				if(m_lPat) // ’á‘¬ƒpƒ^[ƒ“
+				if(m_lPat) // ä½é€Ÿãƒ‘ã‚¿ãƒ¼ãƒ³
 				{
 					Indicator = IND_P; // P
 					Ats_P = 1;
@@ -364,7 +366,7 @@ public:
 			break;
 		}
 
-		// VAÆ¸‚É‚æ‚é•\¦“”
+		// æ–°Aç…§æŸ»ã«ã‚ˆã‚‹è¡¨ç¤ºç¯
 		switch(m_limit)
 		{
 		case LIMIT_20R:
@@ -380,7 +382,7 @@ public:
 			if(m_signal > SIGNAL_YY || (m_signal == SIGNAL_Y && !m_stepA) || !m_stepS)
 			{
 				resetIndicator();
-				Indicator = IND_30; // Ô30
+				Indicator = IND_30; // èµ¤30
 				Ats_30 = 1;
 			}
 			break;
@@ -388,7 +390,7 @@ public:
 			if(m_signal > SIGNAL_Y || (m_signal == SIGNAL_Y && !m_stepA) || !m_stepS)
 			{
 				resetIndicator();
-				Indicator = blink ? IND_R50 : IND_C; // Ô50
+				Indicator = blink ? IND_R50 : IND_C; // èµ¤50
 				Ats_R50 = blink ? 1 : 0;
 			}
 			break;
@@ -396,7 +398,7 @@ public:
 			if(m_signal > SIGNAL_YG || (m_signal == SIGNAL_G && !m_stepA))
 			{
 				resetIndicator();
-				Indicator = blink ? IND_R70 : IND_C; // Ô70
+				Indicator = blink ? IND_R70 : IND_C; // èµ¤70
 				Ats_R70 = blink ? 1 : 0;
 			}
 			break;
@@ -404,7 +406,7 @@ public:
 			if(m_signal == SIGNAL_G && !m_stepA)
 			{
 				resetIndicator();
-				Indicator = blink ? IND_R80 : IND_C; // Ô80
+				Indicator = blink ? IND_R80 : IND_C; // èµ¤80
 				Ats_R80 = blink ? 1 : 0;
 			}
 			break;
@@ -413,7 +415,7 @@ public:
 			break;
 		}
 
-		// “üŠ·ƒ‚[ƒh
+		// å…¥æ›ãƒ¢ãƒ¼ãƒ‰
 		if(Replace) // 30
 		{
 			m_result_sig = ATSEB_NONE;
@@ -435,7 +437,7 @@ public:
 			}
 		}
 
-		// Šm”Fƒ‚[ƒh
+		// ç¢ºèªãƒ¢ãƒ¼ãƒ‰
 		if(Confirm) // 20
 		{
 			m_result_sig = ATSEB_NONE;
@@ -450,47 +452,47 @@ public:
 			Ats_20 = 1;
 		}
 
-		// ATSƒuƒŒ[ƒL‚ÉŒ‹‰Ê‚ğXV
+		// ATSãƒ–ãƒ¬ãƒ¼ã‚­ã«çµæœã‚’æ›´æ–°
 		AtsBrake = max(m_result_sig, m_result_lim);
 
-		// o”­³”F‡}ƒ^ƒCƒ}[
-		if(!m_door && m_leaveAccept) // ‚‘¬ƒpƒ^[ƒ“‚©‚çN
+		// å‡ºç™ºæ‰¿èªåˆå›³ã‚¿ã‚¤ãƒãƒ¼
+		if(!m_door && m_leaveAccept) // é«˜é€Ÿãƒ‘ã‚¿ãƒ¼ãƒ³ã‹ã‚‰N
 		{
 			m_leaveAccept = leaveAcceptTimer();
 			if(m_leaveAccept == 0)
 			{
-				m_hPat = 0; // ‚‘¬ƒpƒ^[ƒ“‚ğƒŠƒZƒbƒg
+				m_hPat = 0; // é«˜é€Ÿãƒ‘ã‚¿ãƒ¼ãƒ³ã‚’ãƒªã‚»ãƒƒãƒˆ
 			}
 		}
 
-		// ‘¬“x’´‰ßƒuƒU[
+		// é€Ÿåº¦è¶…éãƒ–ã‚¶ãƒ¼
 		if(AtsBrake){SpeedOverBuzz = ATS_SOUND_PLAYLOOPING;}
 		else{SpeedOverBuzz = ATS_SOUND_STOP;}
 
-		BeginPattern = m_beginPattern; // ƒpƒ^[ƒ“”­¶
+		BeginPattern = m_beginPattern; // ãƒ‘ã‚¿ãƒ¼ãƒ³ç™ºç”Ÿ
 		m_beginPattern = ATS_SOUND_CONTINUE;
-		ConfirmBuzz = m_confirmBuzz; // Šm”Fƒ‚[ƒhƒuƒU[
+		ConfirmBuzz = m_confirmBuzz; // ç¢ºèªãƒ¢ãƒ¼ãƒ‰ãƒ–ã‚¶ãƒ¼
 		m_confirmBuzz = ATS_SOUND_CONTINUE;
-		ReplaceSw = m_replaceSw; // “üŠ·ƒXƒCƒbƒ`
+		ReplaceSw = m_replaceSw; // å…¥æ›ã‚¹ã‚¤ãƒƒãƒ
 		m_replaceSw = ATS_SOUND_CONTINUE;
 	}
 
-	// ƒhƒAó‘Ô‚ª•Ï‚í‚Á‚½‚ÉÀs‚·‚é
+	// ãƒ‰ã‚¢çŠ¶æ…‹ãŒå¤‰ã‚ã£ãŸæ™‚ã«å®Ÿè¡Œã™ã‚‹
 	void doorState(bool state)
 	{
 		m_door = state;
 
-		if(state == true) // •Â”à
+		if(state == true) // é–‰æ‰‰
 		{
 			m_leaveAccept = 0;
 		}
-		else // ŠJ”à
+		else // é–‹æ‰‰
 		{
 			m_tmrLeaveAccept = *Time + m_leaveAcceptTime;
 		}
 	}
 
-	// SetBrake‚ÅÀs‚·‚é
+	// SetBrakeã§å®Ÿè¡Œã™ã‚‹
 	void setBrake(int notch)
 	{
 		if(notch == EmgBrake)
@@ -499,7 +501,7 @@ public:
 		}
 	}
 
-	// ATSƒŠƒZƒbƒg‚ªˆµ‚í‚ê‚½‚ÉÀs‚·‚é
+	// ATSãƒªã‚»ãƒƒãƒˆãŒæ‰±ã‚ã‚ŒãŸæ™‚ã«å®Ÿè¡Œã™ã‚‹
 	void reset()
 	{
 		if(*BrakeNotch == EmgBrake)
@@ -509,7 +511,7 @@ public:
 		}
 	}
 
-	// Šm”Fƒ‚[ƒh‚ªˆµ‚í‚ê‚½‚ÉÀs‚·‚é
+	// ç¢ºèªãƒ¢ãƒ¼ãƒ‰ãŒæ‰±ã‚ã‚ŒãŸæ™‚ã«å®Ÿè¡Œã™ã‚‹
 	void confirm(void)
 	{
 		if(*BrakeNotch == EmgBrake)
@@ -519,50 +521,54 @@ public:
 		}
 	}
 
-	// “üŠ·ƒXƒCƒbƒ`‚ªˆµ‚í‚ê‚½‚ÉÀs‚·‚é
+	// å…¥æ›ã‚¹ã‚¤ãƒƒãƒãŒæ‰±ã‚ã‚ŒãŸæ™‚ã«å®Ÿè¡Œã™ã‚‹
 	void replace()
 	{
-		if(*BrakeNotch == EmgBrake && (m_signal == SIGNAL_S || Replace)) // “üŠ·M†‚©“üŠ·“ü‚Ì‚Æ‚«
+		if(*BrakeNotch == EmgBrake && (m_signal == SIGNAL_S || Replace)) // å…¥æ›ä¿¡å·ã‹å…¥æ›å…¥ã®ã¨ã
 		{
 			Replace = Replace ? 0 : 1;
 			m_replaceSw = ATS_SOUND_PLAY;
 
-			//if(Replace == 0) // “üŠ·Ø‚É‚µ‚½
+			//if(Replace == 0) // å…¥æ›åˆ‡ã«ã—ãŸ
 			//{
-			//	m_flat15 = 0; // ƒtƒ‰ƒbƒg15
+			//	m_flat15 = 0; // ãƒ•ãƒ©ãƒƒãƒˆ15
 			//}
 		}
 	}
 
-	// M†Œ»¦‚ª•Ï‚í‚Á‚½‚ÉÀs‚·‚é
+	// ä¿¡å·ç¾ç¤ºãŒå¤‰ã‚ã£ãŸæ™‚ã«å®Ÿè¡Œã™ã‚‹
 	void receive(int signal)
 	{
-		m_signal = signal; // M†Œ»¦
-		m_stepA = m_stepS = 0; // •Â‚»‚­“à’n“_‚Ì‰Šú‰»
-		m_hPat = m_lPat = 0; // ‚‘¬ƒpƒ^[ƒ“‚Æ’á‘¬ƒpƒ^[ƒ“‚ÌƒŠƒZƒbƒg
+		m_signal = signal; // ä¿¡å·ç¾ç¤º
+		m_stepA = 0; // é–‰ããå†…åœ°ç‚¹ã®åˆæœŸåŒ–
+		m_stepS = 0;
+		m_lPat = 0; // ä½é€Ÿãƒ‘ã‚¿ãƒ¼ãƒ³ã®ãƒªã‚»ãƒƒãƒˆ
+		// add szhal 2014/10/11
+		//m_stepA = m_stepS = 0; // é–‰ããå†…åœ°ç‚¹ã®åˆæœŸåŒ–
+		//m_hPat = m_lPat = 0; // é«˜é€Ÿãƒ‘ã‚¿ãƒ¼ãƒ³ã¨ä½é€Ÿãƒ‘ã‚¿ãƒ¼ãƒ³ã®ãƒªã‚»ãƒƒãƒˆ
 
-		// 2012/06/05 Œ±“I‚É”p~
-		//if(signal == SIGNAL_S) // “üŠ·M†‚ğó‚¯‚½‚Æ‚«Šm”Fƒ‚[ƒh‚ğ–³Œø‰»
+		// 2012/06/05 è©¦é¨“çš„ã«å»ƒæ­¢
+		//if(signal == SIGNAL_S) // å…¥æ›ä¿¡å·ã‚’å—ã‘ãŸã¨ãç¢ºèªãƒ¢ãƒ¼ãƒ‰ã‚’ç„¡åŠ¹åŒ–
 		//{
 		//	Confirm = 0;
 		//}
 	}
 
-	// –‹ÆÒİ’è‚ğ’Ê‰ß‚µ‚½‚ÉÀs‚·‚é
+	// äº‹æ¥­è€…è¨­å®šã‚’é€šéã—ãŸæ™‚ã«å®Ÿè¡Œã™ã‚‹
 	void pickRoute(int data=0)
 	{
 		Route = data % 3;
 	}
 
-	// Å‚‘¬“xİ’è‚ğ’Ê‰ß‚µ‚½‚ÉÀs‚·‚é
+	// æœ€é«˜é€Ÿåº¦è¨­å®šã‚’é€šéã—ãŸæ™‚ã«å®Ÿè¡Œã™ã‚‹
 	void pickLimit(int data=115)
 	{
-		// —ñ‘I‚É‚æ‚éÅ‚‘¬“x‚Ìİ’è
-		// Œ»’iŠK‚Å‚Í 115km/h ‚ğÅ‚‘¬“x‚Æ‚µ‚ÄŒÅ’è
+		// åˆ—é¸ã«ã‚ˆã‚‹æœ€é«˜é€Ÿåº¦ã®è¨­å®š
+		// ç¾æ®µéšã§ã¯ 115km/h ã‚’æœ€é«˜é€Ÿåº¦ã¨ã—ã¦å›ºå®š
 		// m_limitSpeed = 115;
 	}
 
-	// o”­³”F‡}ƒ^ƒCƒ}[İ’è‚ğ’Ê‰ß‚µ‚½‚ÉÀs‚·‚é
+	// å‡ºç™ºæ‰¿èªåˆå›³ã‚¿ã‚¤ãƒãƒ¼è¨­å®šã‚’é€šéã—ãŸæ™‚ã«å®Ÿè¡Œã™ã‚‹
 	void passedAcceptTimer(int data)
 	{
 		if(*TrainSpeed > 0)
@@ -571,7 +577,7 @@ public:
 		}
 	}
 
-	// A“_‚ğ’Ê‰ß‚µ‚½‚ÉÀs‚·‚é
+	// Aç‚¹ã‚’é€šéã—ãŸæ™‚ã«å®Ÿè¡Œã™ã‚‹
 	void passedA(int signal)
 	{
 		if(*TrainSpeed > 0)
@@ -583,46 +589,46 @@ public:
 		}
 	}
 
-	// S“_‚ğ’Ê‰ß‚µ‚½‚ÉÀs‚·‚é
+	// Sç‚¹ã‚’é€šéã—ãŸæ™‚ã«å®Ÿè¡Œã™ã‚‹
 	void passedS(int signal, int data)
 	{
 		if(*TrainSpeed > 0)
 		{
-			if(m_signal == SIGNAL_S && (signal == SIGNAL_N || data > 0)) // “üŠ·ƒ‚[ƒh
+			if(m_signal == SIGNAL_S && (signal == SIGNAL_N || data > 0)) // å…¥æ›ãƒ¢ãƒ¼ãƒ‰
 			{
 				m_flat15 = 1;
 			}
-			else if((m_signal == SIGNAL_Y || m_signal == SIGNAL_YY) && signal == SIGNAL_R)// ’Êí
+			else if((m_signal == SIGNAL_Y || m_signal == SIGNAL_YY) && signal == SIGNAL_R)// é€šå¸¸
 			{
 				m_stepS = 1;
 			}
 		}
 	}
 
-	// HP“_‚ğ’Ê‰ß‚µ‚½‚ÉÀs‚·‚é
+	// HPç‚¹ã‚’é€šéã—ãŸæ™‚ã«å®Ÿè¡Œã™ã‚‹
 	void passedHP(int signal, int data)
 	{
 		if(*TrainSpeed > 0)
 		{
-			if(signal == SIGNAL_G) // ‘ÎÆ•ÂÇ‚ªGŒ»¦‚Ìê‡
+			if(signal == SIGNAL_G) // å¯¾ç…§é–‰å¡ãŒGç¾ç¤ºã®å ´åˆ
 			{
 				if((data == 0 || data > 2) && m_hPat == 0)
 				{
 					m_hPat = 1;
-					m_distHp = 598; // 588[m]’n“_ + 10[m]—]—T
-					m_beginPattern = ATS_SOUND_PLAY; // ƒpƒ^[ƒ“”­¶
-					m_leaveAccept = 1; // o”­³”F‡}
+					m_distHp = 598; // 588[m]åœ°ç‚¹ + 10[m]ä½™è£•
+					m_beginPattern = ATS_SOUND_PLAY; // ãƒ‘ã‚¿ãƒ¼ãƒ³ç™ºç”Ÿ
+					m_leaveAccept = 1; // å‡ºç™ºæ‰¿èªåˆå›³
 
 					if(data)
 					{
-						m_leaveAcceptTime = data; // o”­³”F‡}ƒ^ƒCƒ}[
+						m_leaveAcceptTime = data; // å‡ºç™ºæ‰¿èªåˆå›³ã‚¿ã‚¤ãƒãƒ¼
 					}
 				}
-				else if(data == 1) // •â³—pƒ‹[ƒvƒRƒCƒ‹
+				else if(data == 1) // è£œæ­£ç”¨ãƒ«ãƒ¼ãƒ—ã‚³ã‚¤ãƒ«
 				{
-					m_distHp = 122; // 112[m]’n“_ + 10[m]—]—T
+					m_distHp = 122; // 112[m]åœ°ç‚¹ + 10[m]ä½™è£•
 				}
-				else if(data == 2) // ‚‘¬ƒpƒ^[ƒ“æÁ
+				else if(data == 2) // é«˜é€Ÿãƒ‘ã‚¿ãƒ¼ãƒ³å–æ¶ˆ
 				{
 					m_hPat = 0;
 				}
@@ -630,28 +636,28 @@ public:
 		}
 	}
 
-	// LP“_‚ğ’Ê‰ß‚µ‚½‚ÉÀs‚·‚é
+	// LPç‚¹ã‚’é€šéã—ãŸæ™‚ã«å®Ÿè¡Œã™ã‚‹
 	void passedLP(int signal)
 	{
 		if(*TrainSpeed > 0)
 		{
-			if(m_stepS == 1) // •Â‚»‚­“à‚ÌS“_‚ª—LŒø
+			if(m_stepS == 1) // é–‰ããå†…ã®Sç‚¹ãŒæœ‰åŠ¹
 			{
 				m_lPat = 1;
-				m_distLp = 31; // 31[m]’n“_
+				m_distLp = 31; // 31[m]åœ°ç‚¹
 			}
 		}
 	}
 
-	// VA“_‚ğ’Ê‰ß‚µ‚½‚É‚ÉÀs‚·‚é
+	// æ–°Aç‚¹ã‚’é€šéã—ãŸæ™‚ã«æ™‚ã«å®Ÿè¡Œã™ã‚‹
 	void passedA2(int data)
 	{
 		if(*TrainSpeed > 0)
 		{
-			if(data == 0 || m_limit < data) // ƒŠƒZƒbƒg‚©Æ¸‘¬“x—‰º‚Ì‚Æ‚«
+			if(data == 0 || m_limit < data) // ãƒªã‚»ãƒƒãƒˆã‹ç…§æŸ»é€Ÿåº¦è½ä¸‹ã®ã¨ã
 			{
 				m_limit = data;
-				if(data){m_beginPattern = ATS_SOUND_PLAY;} // ƒpƒ^[ƒ“”­¶
+				if(data){m_beginPattern = ATS_SOUND_PLAY;} // ãƒ‘ã‚¿ãƒ¼ãƒ³ç™ºç”Ÿ
 			}
 		}
 	}
