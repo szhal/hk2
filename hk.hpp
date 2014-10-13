@@ -13,6 +13,8 @@
 #define SIGNAL_G 4 // 115
 #define SIGNAL_S 5 // S70
 #define SIGNAL_N 7 // N
+// unic : 2014/10/13
+// 信号Nについて、sig6番に移動したい
 
 #define SPEED_R 0 // R
 #define SPEED_YY 30+1 // YY
@@ -205,10 +207,12 @@ public:
 			break;
 		case SIGNAL_Y: // 50
 			if(!m_stepA && !m_stepS) // A点･S点でない
-			// add szhal 2014/10/11
+			// szhal : 2014/10/11
+			// 変更
+
 			//if(!m_stepA || !m_stepS) // A点･S点でない
+			// unic : 2014/09/08 22:52
 			// ↑ここは (!m_stepA && !m_stepS) かもしれない
-			// add 2014/09/08 22:52
 			{
 				if(speed > SPEED_Y){m_result_sig = ATSEB_LIMIT;}
 				else{m_result_sig = ATSEB_NONE;}
