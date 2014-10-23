@@ -3,7 +3,7 @@
 #include "hk.hpp"
 #include "Ats.h"
 
-BOOL APIENTRY DllMain( HANDLE hModule, 
+BOOL APIENTRY DllMain( HINSTANCE hModule, 
                        DWORD  ul_reason_for_call, 
                        LPVOID lpReserved )
 {
@@ -133,7 +133,7 @@ ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int
 	sound[2] = g_hk.SpeedOverBuzz; // 速度超過時ブザー
 	sound[5] = g_hk.ReplaceSw; // 入換スイッチ
 
-    return g_output;
+	return g_output;
 }
 
 ATS_API void WINAPI SetPower(int notch)

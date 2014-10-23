@@ -4,14 +4,26 @@
 //             Rock_On, mackoy
 //=============================
 
-#if __cplusplus
-extern "C" {
-#endif
+#if __MINGW32__
 
 #ifdef ATS_EXPORTS
 #define ATS_API __declspec(dllexport) __stdcall
 #else
 #define ATS_API __declspec(dllimport) __stdcall
+#endif
+
+#else
+
+#ifdef ATS_EXPORTS
+#define ATS_API __declspec(dllexport)
+#else
+#define ATS_API __declspec(dllimport)
+#endif
+
+#endif
+
+#if __cplusplus
+extern "C" {
 #endif
 
 // ATS Plug-in Version
