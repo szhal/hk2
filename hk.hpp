@@ -12,9 +12,7 @@
 #define SIGNAL_YG 3 // 70
 #define SIGNAL_G 4 // 115
 #define SIGNAL_S 5 // S70
-#define SIGNAL_N 7 // N
-// unic : 2014/10/13
-// 信号Nについて、sig6番に移動したい
+#define SIGNAL_N 6 // N
 
 #define SPEED_R 0 // R
 #define SPEED_YY 30+1 // YY
