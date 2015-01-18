@@ -7,7 +7,7 @@ test:	$(TARGET)
 	./$(TARGET) -test
 
 $(TARGET): $(OBJS)
-	gcc -Wall -c -DATS_EXPORTS Ats.cpp
+	gcc -Wall -c -DATS_EXPORTS Ats.cpp -lm -o Ats.o
 	gcc -shared -o $(TARGET) Ats.def Ats.o
 
 gnm:
