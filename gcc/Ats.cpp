@@ -3,6 +3,10 @@
 #include "hk.hpp"
 #include "Ats.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 BOOL APIENTRY DllMain( HINSTANCE hModule, 
                        DWORD  ul_reason_for_call, 
                        LPVOID lpReserved )
@@ -25,6 +29,10 @@ BOOL APIENTRY DllMain( HINSTANCE hModule,
 
 	return TRUE;
 }
+
+#ifdef __cplusplus
+};
+#endif
 
 ATS_API void WINAPI Load()
 {
@@ -193,8 +201,8 @@ ATS_API void WINAPI SetSignal(int signal)
 	g_hk.receive(signal);
 }
 
-ATS_API void WINAPI SetBeaconData(ATS_BEACONDATA beaconData){
-
+ATS_API void WINAPI SetBeaconData(ATS_BEACONDATA beaconData)
+{
 	switch(beaconData.Type)
 	{
 	case ATS_BEACON_ROUTE: // éñã∆é“ê›íË

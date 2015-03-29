@@ -39,6 +39,24 @@
 
 // #define MAX_SPEED 115+1 // 最高速度
 
+/*
+#define IND_C 0 // 透過
+#define IND_0 1 // 0
+#define IND_20 2 // 20
+#define IND_30 3 // 30
+#define IND_50 4 // 50
+#define IND_70 5 // 70
+#define IND_80 6 // 80
+#define IND_F 7 // F
+#define IND_R50 8 // 赤20<点滅>
+#define IND_R70 9 // 赤30<点滅>
+#define IND_R50 10 // 赤50<点滅>
+#define IND_R70 11 // 赤70<点滅>
+#define IND_R80 12 // 赤80<点滅>
+#define IND_RF 13 // 赤F<点滅>
+#define IND_P 14 // P
+*/
+
 #define IND_C 0 // 透過
 #define IND_0 1 // 0
 #define IND_20 2 // 20
@@ -219,7 +237,7 @@ public:
 		case SIGNAL_YY: // 30
 			if(!m_stepS) // S点でない
 			{
-				if(speed > SPEED_YY){m_result_sig = ATSEB_STOP;}
+				if(speed > SPEED_YY){m_result_sig = ATSEB_LIMIT;}
 			}
 			else // S点20
 			{
