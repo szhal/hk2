@@ -5,9 +5,13 @@
 //=============================
 
 #ifdef ATS_EXPORTS
-#define ATS_API __declspec(dllexport)
+#define ATS_API __declspec(dllexport) __stdcall
 #else
-#define ATS_API __declspec(dllimport)
+#define ATS_API __declspec(dllimport) __stdcall
+#endif
+
+#if __cplusplus
+extern "C" {
 #endif
 
 // ATS Plug-in Version
@@ -141,3 +145,7 @@ ATS_API void WINAPI SetSignal(int);
 
 // Called when the beacon data is received
 ATS_API void WINAPI SetBeaconData(ATS_BEACONDATA);
+
+#if __cplusplus
+};
+#endif
