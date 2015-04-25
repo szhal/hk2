@@ -125,7 +125,7 @@ ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int
 	panel[30] = (g_hk.Route == ROUTE_HANKYU) && g_hk.Ats_N;
 	panel[31] = (g_hk.Route == ROUTE_HANKYU) && g_hk.Ats_HP;
 
-	panel[35] = g_hk.Confirm;
+	panel[35] = g_hk.Ats_Confirm;
 	panel[36] = g_hk.Replace;
 
 	panel[40] = (g_hk.Route == ROUTE_HANSHIN) && (g_hk.Ats_20 || g_hk.Ats_30 || g_hk.Ats_50 || g_hk.Ats_70 || g_hk.Ats_80 || g_hk.Ats_F); // 有コード
