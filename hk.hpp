@@ -4,6 +4,7 @@
 #include <math.h>
 
 #define maximum(a,b) ((a)>(b)?(a):(b))
+#define HQ_HP_DECELEATION (19.5F) // 減速度[km/h/s] * 7.2
 
 #define SIGNAL_R 0 // 0
 #define SIGNAL_YY 1 // 30
@@ -53,22 +54,11 @@
 #define IND_R80 12 // 赤80<点滅>
 #define IND_RF 13 // 赤F<点滅>
 #define IND_P 14 // P
-
-/*
-#define IND_C 0 // 透過
-#define IND_0 1 // 0
-#define IND_20 2 // 20
-#define IND_30 3 // 30
-#define IND_50 4 // 50
-#define IND_70 5 // 70
-#define IND_80 6 // 80
-#define IND_F 7 // F
-#define IND_R50 8 // 赤50<点滅>
-#define IND_R70 9 // 赤70<点滅>
-#define IND_R80 10 // 赤80<点滅>
-#define IND_RF 11 // 赤F<点滅>
-#define IND_P 12 // P
-*/
+// DigitalNumberここまで
+#define IND_N 15 // N
+#define IND_HP 16 // HP
+#define IND_CONF 17 // 確認
+#define IND_REPL 18 // 入換
 
 class CHk
 {
@@ -90,6 +80,7 @@ private:
 	float m_distLp; // 低速パターン降下までの距離[m]
 
 	int m_result_sig; // 信号照査の結果
+	int m_result_hp; // 高速パターンの結果
 	int m_result_lim; // 新A点照査の結果
 
 	int m_leaveAccept; // 出発承認合図
@@ -131,6 +122,11 @@ private:
 		Ats_P = 0; // P
 		Ats_N = 0; // N
 		Ats_HP = 0; // HP
+
+		for(int i=0;i<19;i++)
+		{
+			IndicatorPL[i] = 0; // 単一表示
+		}
 	}
 
 public:
@@ -146,13 +142,16 @@ public:
 	int AtsBrake; // ATSブレーキ
 	int Route; // 事業者
 
-	int Indicator; // 表示器シフト(0～12)
-	// 透過-0-20-30-50-70-80-F-赤50-赤70-赤80-赤F-P(赤では点滅)
+	int Indicator; // 表示器シフト
+	// 透過-0-20-30-50-70-80-F-赤20-赤30-赤50-赤70-赤80-赤F-P(赤では点滅)
+	int IndicatorPL[19]; // 単一表示
 
 	int Ats_P; // P
 	int Ats_0; // 0
 	int Ats_20; // 20
+	int Ats_R20; // 赤20<点滅>
 	int Ats_30; // 30
+	int Ats_R30; // 赤30<点滅>
 	int Ats_50; // 50
 	int Ats_R50; //赤50<点滅>
 	int Ats_70; // 70
@@ -163,6 +162,7 @@ public:
 	int Ats_RF; // 赤F<点滅>
 	int Ats_N; // N
 	int Ats_HP; // HP
+	int Ats_Confirm; // 確認
 
 	int Confirm; // 確認
 	int Replace; // 入換
@@ -200,9 +200,7 @@ public:
 	void execute()
 	{
 		float speed = fabsf(*TrainSpeed); // 速度の絶対値[km/h]
-		//float def = speed / 3600 * *DeltaT; // 1フレームで動いた距離(絶対値)[m]
 		float def = *TrainSpeed / 3600 * *DeltaT; // 1フレームで動いた距離(絶対値)[m]
-		// 2012/08/14 距離の計算方法変更 速度の絶対値を使わない方式
 
 		int blink = (*Time % 1000) / 500; // 表示灯点滅(0.5s)
 
@@ -228,18 +226,16 @@ public:
 				break;
 			}
 		case SIGNAL_YY: // 30
+		case SIGNAL_S: // REPLACE
 			if(!m_stepS) // S点でない
 			{
 				if(speed > SPEED_YY){m_result_sig = ATSEB_LIMIT;}
 			}
 			else // S点20
 			{
+				// 入換の状態でS点通過すると入換は無効
 				if(speed > 20+1){m_result_sig = ATSEB_STOP;}
 			}
-			break;
-		case SIGNAL_S: // 70
-			if(speed > SPEED_S){m_result_sig = ATSEB_LIMIT;}
-			else{m_result_sig = ATSEB_NONE;}
 			break;
 		case SIGNAL_N: // N
 		case SIGNAL_R: // 0
@@ -252,12 +248,9 @@ public:
 		if(m_hPat)
 		{
 			m_distHp -= def; // 残り距離を減算する
-			float pattern = speed * speed / 19.5F; // パターン速度
-			if(pattern >= m_distHp){m_result_sig = ATSEB_LIMIT;} // ブレーキ動作
-			else{m_result_sig = ATSEB_NONE;} // 減速後緩解
-
-			// 勾配ごとにパターン定義を変える
-			// float pattern = speed * speed / (Decelation * CONST_HP0); // パターン速度
+			float pattern = speed * speed / (HQ_HP_DECELEATION); // パターン速度
+			if(pattern >= m_distHp){m_result_hp = ATSEB_LIMIT;} // ブレーキ動作
+			else{m_result_hp = ATSEB_NONE;} // 減速後緩解 
 
 			// HPは設定距離598mの8割走行(478.4m/-119.6m)かつ停止検知でリセット
 			if(m_distHp < 119.6F && m_distHp >= 10.0F && speed == 0)
@@ -312,22 +305,7 @@ public:
 		switch(m_signal)
 		{
 		case SIGNAL_G:
-			if(m_hPat) // 高速パターン
-			{
-				if(!m_door || m_distHp < 10.0F) // オーバーでNに移行
-				{
-					Indicator = IND_C;
-					Ats_N = m_leaveAccept; // N
-				}
-				else // 赤F
-				{
-					Indicator = blink ? IND_RF : IND_C;
-					Ats_RF = 1;
-					Ats_HP = blink ? 1 : 0; // HP
-				}
-				break;
-			}
-			else if(!m_stepA) // フリーラン(A点でない)
+			if(!m_stepA) // フリーラン(A点でない)
 			{
 				Indicator = IND_F;
 				Ats_F = 1;
@@ -364,10 +342,7 @@ public:
 				}
 			}
 			break;
-		case SIGNAL_S: // 70
-			Indicator = IND_70;
-			Ats_70 = 1;
-			break;
+		case SIGNAL_S: // REPLACE
 		case SIGNAL_N: // N
 			Indicator = IND_C;
 			Ats_N = 1;
@@ -377,6 +352,22 @@ public:
 			Indicator = IND_0;
 			Ats_0 = 1;
 			break;
+		}
+
+		// 高速パターンによる表示灯
+		if(m_hPat) // 高速パターン
+		{
+			if(!m_door || m_distHp < 10.0F) // オーバーでNに移行
+			{
+				Indicator = IND_C;
+				Ats_N = m_leaveAccept; // N
+			}
+			else // 赤F
+			{
+				Indicator = blink ? IND_RF : IND_C;
+				Ats_RF = 1;
+				Ats_HP = blink ? 1 : 0; // HP
+			}
 		}
 
 		// 新A照査による表示灯
@@ -428,6 +419,13 @@ public:
 			break;
 		}
 
+		// 高速パターン有効なとき信号照査・新A点照査の表示は赤色の点滅
+		if(m_hPat && Indicator > 1 && Indicator < 7)
+		{
+			Indicator += 6; // 表示をシフトして赤色にする
+		}
+		
+
 		// 入換モード
 		if(Replace) // 30
 		{
@@ -463,10 +461,15 @@ public:
 
 			Indicator = IND_20;
 			Ats_20 = 1;
+			Ats_Confirm = blink;
+		}
+		else
+		{
+			Ats_Confirm = 0;
 		}
 
 		// ATSブレーキに結果を更新
-		AtsBrake = maximum(m_result_sig, m_result_lim);
+		AtsBrake = maximum(maximum(m_result_sig,m_result_hp), m_result_lim);
 
 		// 出発承認合図タイマー
 		if(!m_door && m_leaveAccept) // 高速パターンからN
@@ -551,15 +554,6 @@ public:
 		m_stepA = 0; // 閉そく内地点の初期化
 		m_stepS = 0;
 		m_lPat = 0; // 低速パターンのリセット
-		// add szhal 2014/10/11
-		//m_stepA = m_stepS = 0; // 閉そく内地点の初期化
-		//m_hPat = m_lPat = 0; // 高速パターンと低速パターンのリセット
-
-		// 2012/06/05 試験的に廃止
-		//if(signal == SIGNAL_S) // 入換信号を受けたとき確認モードを無効化
-		//{
-		//	Confirm = 0;
-		//}
 	}
 
 	// 事業者設定を通過した時に実行する
@@ -606,7 +600,7 @@ public:
 			{
 				m_flat15 = 1;
 			}
-			else if((m_signal == SIGNAL_Y || m_signal == SIGNAL_YY) && signal == SIGNAL_R)// 通常
+			else if((m_signal == SIGNAL_Y || m_signal == SIGNAL_YY || m_signal == SIGNAL_S) && signal == SIGNAL_R) // 通常
 			{
 				m_stepS = 1;
 			}
@@ -634,7 +628,7 @@ public:
 			{
 				m_distHp = 122; // 112[m]地点 + 10[m]余裕
 			}
-			else if(data == -1) // 高速パターン取消
+			else if(data == 2) // 高速パターン取消
 			{
 				m_hPat = 0;
 			}
