@@ -38,7 +38,6 @@
 
 // #define MAX_SPEED 115+1 // 最高速度
 
-/*
 #define IND_C 0 // 透過
 #define IND_0 1 // 0
 #define IND_20 2 // 20
@@ -47,15 +46,15 @@
 #define IND_70 5 // 70
 #define IND_80 6 // 80
 #define IND_F 7 // F
-#define IND_R50 8 // 赤20<点滅>
-#define IND_R70 9 // 赤30<点滅>
+#define IND_R20 8 // 赤20<点滅>
+#define IND_R30 9 // 赤30<点滅>
 #define IND_R50 10 // 赤50<点滅>
 #define IND_R70 11 // 赤70<点滅>
 #define IND_R80 12 // 赤80<点滅>
 #define IND_RF 13 // 赤F<点滅>
 #define IND_P 14 // P
-*/
 
+/*
 #define IND_C 0 // 透過
 #define IND_0 1 // 0
 #define IND_20 2 // 20
@@ -69,6 +68,7 @@
 #define IND_R80 10 // 赤80<点滅>
 #define IND_RF 11 // 赤F<点滅>
 #define IND_P 12 // P
+*/
 
 class CHk
 {
@@ -222,12 +222,6 @@ public:
 			break;
 		case SIGNAL_Y: // 50
 			if(!m_stepA && !m_stepS) // A点･S点でない
-			// szhal : 2014/10/11
-			// 変更
-
-			//if(!m_stepA || !m_stepS) // A点･S点でない
-			// unic : 2014/09/08 22:52
-			// ↑ここは (!m_stepA && !m_stepS) かもしれない
 			{
 				if(speed > SPEED_Y){m_result_sig = ATSEB_LIMIT;}
 				else{m_result_sig = ATSEB_NONE;}
@@ -409,24 +403,24 @@ public:
 			if(m_signal > SIGNAL_Y || (m_signal == SIGNAL_Y && !m_stepA) || !m_stepS)
 			{
 				resetIndicator();
-				Indicator = blink ? IND_R50 : IND_C; // 赤50
-				Ats_R50 = blink ? 1 : 0;
+				Indicator = blink ? IND_50 : IND_C; // 赤50
+				Ats_50 = blink ? 1 : 0;
 			}
 			break;
 		case LIMIT_70:
 			if(m_signal > SIGNAL_YG || (m_signal == SIGNAL_G && !m_stepA))
 			{
 				resetIndicator();
-				Indicator = blink ? IND_R70 : IND_C; // 赤70
-				Ats_R70 = blink ? 1 : 0;
+				Indicator = blink ? IND_70 : IND_C; // 赤70
+				Ats_70 = blink ? 1 : 0;
 			}
 			break;
 		case LIMIT_80:
 			if(m_signal == SIGNAL_G && !m_stepA)
 			{
 				resetIndicator();
-				Indicator = blink ? IND_R80 : IND_C; // 赤80
-				Ats_R80 = blink ? 1 : 0;
+				Indicator = blink ? IND_80 : IND_C; // 赤80
+				Ats_80 = blink ? 1 : 0;
 			}
 			break;
 		case LIMIT_F:
@@ -511,15 +505,6 @@ public:
 		}
 	}
 
-	// SetBrakeで実行する
-	void setBrake(int notch)
-	{
-		if(notch == EmgBrake)
-		{
-			Confirm = 0;
-		}
-	}
-
 	// ATSリセットが扱われた時に実行する
 	void reset()
 	{
@@ -527,6 +512,7 @@ public:
 		{
 			AtsBrake = ATSEB_NONE;
 			m_result_sig = m_result_lim = ATSEB_NONE;
+			m_leaveAccept = 0; // 過走時では出発承認タイマーをキャンセル
 		}
 	}
 
@@ -535,8 +521,16 @@ public:
 	{
 		if(*BrakeNotch == EmgBrake)
 		{
-			Confirm = 1;
-			m_confirmBuzz = ATS_SOUND_PLAY;
+			if(Confirm == 0)
+			{
+				Confirm = 1;
+				m_confirmBuzz = ATS_SOUND_PLAYLOOPING;
+			}
+			else
+			{
+				Confirm = 0;
+				m_confirmBuzz = ATS_SOUND_STOP;
+			}
 		}
 	}
 
@@ -547,11 +541,6 @@ public:
 		{
 			Replace = Replace ? 0 : 1;
 			m_replaceSw = ATS_SOUND_PLAY;
-
-			//if(Replace == 0) // 入換切にした
-			//{
-			//	m_flat15 = 0; // フラット15
-			//}
 		}
 	}
 
@@ -629,28 +618,25 @@ public:
 	{
 		if(*TrainSpeed > 0)
 		{
-			if(signal == SIGNAL_G) // 対照閉塞がG現示の場合
+			if((data == 0 || data > 2) && m_hPat == 0)
 			{
-				if((data == 0 || data > 2) && m_hPat == 0)
-				{
-					m_hPat = 1;
-					m_distHp = 598; // 588[m]地点 + 10[m]余裕
-					m_beginPattern = ATS_SOUND_PLAY; // パターン発生
-					m_leaveAccept = 1; // 出発承認合図
+				m_hPat = 1;
+				m_distHp = 598; // 588[m]地点 + 10[m]余裕
+				m_beginPattern = ATS_SOUND_PLAY; // パターン発生
+				m_leaveAccept = 1; // 出発承認合図
 
-					if(data)
-					{
-						m_leaveAcceptTime = data; // 出発承認合図タイマー
-					}
-				}
-				else if(data == 1) // 補正用ループコイル
+				if(data)
 				{
-					m_distHp = 122; // 112[m]地点 + 10[m]余裕
+					m_leaveAcceptTime = data; // 出発承認合図タイマー
 				}
-				else if(data == 2) // 高速パターン取消
-				{
-					m_hPat = 0;
-				}
+			}
+			else if(data == 1) // 補正用ループコイル
+			{
+				m_distHp = 122; // 112[m]地点 + 10[m]余裕
+			}
+			else if(data == -1) // 高速パターン取消
+			{
+				m_hPat = 0;
 			}
 		}
 	}
@@ -676,7 +662,6 @@ public:
 			if(data == 0 || m_limit < data) // リセットか照査速度落下のとき
 			{
 				m_limit = data;
-				if(data){m_beginPattern = ATS_SOUND_PLAY;} // パターン発生
 			}
 		}
 	}

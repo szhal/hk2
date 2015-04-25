@@ -152,7 +152,6 @@ ATS_API void WINAPI SetPower(int notch)
 ATS_API void WINAPI SetBrake(int notch)
 {
 	g_brakeNotch = notch;
-	g_hk.setBrake(notch);
 }
 
 ATS_API void WINAPI SetReverser(int pos)
