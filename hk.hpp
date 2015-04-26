@@ -234,9 +234,7 @@ public:
 			else{m_result_hp = ATSEB_NONE;} // 減速後緩解
 
 			// HPは設定距離598mの8割走行(478.4m/-119.6m)かつ停止検知でリセット
-			// if(m_distHp < 119.6F && m_distHp >= 10.0F && speed == 0)
-			// 10m以上のオーバー時に高速パターンをリセットできないので距離を見ない仕様に変更
-			if(m_distHp < 119.6F && speed == 0)
+			if(m_distHp < 119.6F && m_distHp >= 10.0F && speed == 0)
 			{
 				m_hPat = 0;
 			}
@@ -351,6 +349,20 @@ public:
 			break;
 		}
 
+		// 高速パターンによる表示灯
+		if(m_hPat) // 高速パターン
+		{
+			if(!m_door || m_distHp < 10.0F) // オーバーでNに移行
+			{
+				Indicator = IND_0;
+				Ats_N = m_leaveAccept; // N
+			}
+			else // 赤F
+			{
+				Ats_HP = blink ? 1 : 0; // HP
+			}
+		}
+
 		// 新A照査による表示灯
 		switch(m_limit)
 		{
@@ -398,20 +410,6 @@ public:
 		case LIMIT_F:
 		default:
 			break;
-		}
-
-		// 高速パターンによる表示灯
-		if(m_hPat) // 高速パターン
-		{
-			if(!m_door || m_distHp < 10.0F) // オーバーでNに移行
-			{
-				Indicator = IND_0;
-				Ats_N = m_leaveAccept; // N
-			}
-			else // 赤F
-			{
-				Ats_HP = blink ? 1 : 0; // HP
-			}
 		}
 
 		// 高速パターン有効なとき信号照査・新A点照査の表示は赤色の点滅
