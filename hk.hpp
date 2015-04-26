@@ -340,7 +340,7 @@ public:
 			}
 			break;
 		case SIGNAL_S: // REPLACE
-			Indicator = IND_C;
+			Indicator = IND_0;
 			Ats_N = 1;
 			break;
 		case SIGNAL_N: // N
@@ -349,20 +349,6 @@ public:
 			Indicator = IND_0;
 			Ats_0 = 1;
 			break;
-		}
-
-		// 高速パターンによる表示灯
-		if(m_hPat) // 高速パターン
-		{
-			if(!m_door || m_distHp < 10.0F) // オーバーでNに移行
-			{
-				Indicator = IND_0;
-				Ats_N = m_leaveAccept; // N
-			}
-			else // 赤F
-			{
-				Ats_HP = blink ? 1 : 0; // HP
-			}
 		}
 
 		// 新A照査による表示灯
@@ -412,6 +398,20 @@ public:
 		case LIMIT_F:
 		default:
 			break;
+		}
+
+		// 高速パターンによる表示灯
+		if(m_hPat) // 高速パターン
+		{
+			if(!m_door || m_distHp < 10.0F) // オーバーでNに移行
+			{
+				Indicator = IND_0;
+				Ats_N = m_leaveAccept; // N
+			}
+			else // 赤F
+			{
+				Ats_HP = blink ? 1 : 0; // HP
+			}
 		}
 
 		// 高速パターン有効なとき信号照査・新A点照査の表示は赤色の点滅
