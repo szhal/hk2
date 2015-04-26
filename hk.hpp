@@ -490,7 +490,7 @@ public:
 		BeginPattern = m_beginPattern; // パターン発生
 		m_beginPattern = ATS_SOUND_CONTINUE;
 		ConfirmBuzz = m_confirmBuzz; // 確認モードブザー
-		m_confirmBuzz = ATS_SOUND_CONTINUE;
+		// m_confirmBuzz = ATS_SOUND_CONTINUE;
 		ReplaceSw = m_replaceSw; // 入換スイッチ
 		m_replaceSw = ATS_SOUND_CONTINUE;
 	}
