@@ -1,4 +1,3 @@
-#define ATS_BEACON_ROUTE 0 // 事業者設定
 #define ATS_BEACON_LIMIT 1 // 最高速度設定
 #define ATS_BEACON_ACCEPT 5 // 出発承認合図
 #define ATS_BEACON_A 10 // 旧来A点/新型B1点

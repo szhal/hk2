@@ -106,33 +106,30 @@ ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int
 	}
 
 	// パネル出力
-	panel[0] = (g_hk.Route == ROUTE_HANKYU) ? g_hk.Indicator : 0;
+	panel[0] = g_hk.Indicator;
 
-	panel[10] = (g_hk.Route == ROUTE_HANKYU || g_hk.Route == ROUTE_SANYOU) && g_hk.Ats_0;
-	panel[11] = (g_hk.Route == ROUTE_HANKYU || g_hk.Route == ROUTE_SANYOU) && g_hk.Ats_20;
-	panel[12] = (g_hk.Route == ROUTE_HANKYU || g_hk.Route == ROUTE_SANYOU) && g_hk.Ats_30;
-	panel[13] = (g_hk.Route == ROUTE_HANKYU || g_hk.Route == ROUTE_SANYOU) && g_hk.Ats_50;
-	panel[14] = (g_hk.Route == ROUTE_HANKYU || g_hk.Route == ROUTE_SANYOU) && g_hk.Ats_70;
-	panel[15] = (g_hk.Route == ROUTE_HANKYU) && g_hk.Ats_80;
-	panel[16] = (g_hk.Route == ROUTE_HANKYU || g_hk.Route == ROUTE_SANYOU) && g_hk.Ats_F;
+	panel[10] = g_hk.Ats_0;
+	panel[11] = g_hk.Ats_20;
+	panel[12] = g_hk.Ats_30;
+	panel[13] = g_hk.Ats_50;
+	panel[14] = g_hk.Ats_70;
+	panel[15] = g_hk.Ats_80;
+	panel[16] = g_hk.Ats_F;
 
 	panel[20] = g_hk.Ats_R20;
 	panel[21] = g_hk.Ats_R30;
-	panel[22] = (g_hk.Route == ROUTE_HANKYU) && g_hk.Ats_R50;
-	panel[23] = (g_hk.Route == ROUTE_HANKYU) && g_hk.Ats_R70;
-	panel[24] = (g_hk.Route == ROUTE_HANKYU) && g_hk.Ats_R80;
-	panel[25] = (g_hk.Route == ROUTE_HANKYU) && g_hk.Ats_RF;
-	panel[26] = (g_hk.Route == ROUTE_HANKYU) && g_hk.Ats_P;
+	panel[22] = g_hk.Ats_R50;
+	panel[23] = g_hk.Ats_R70;
+	panel[24] = g_hk.Ats_R80;
+	panel[25] = g_hk.Ats_RF;
+	panel[26] = g_hk.Ats_P;
 
-	panel[30] = (g_hk.Route == ROUTE_HANKYU) && g_hk.Ats_N;
-	panel[31] = (g_hk.Route == ROUTE_HANKYU) && g_hk.Ats_HP;
+	panel[30] = g_hk.Ats_N;
+	panel[31] = g_hk.Ats_HP;
+	panel[32] = g_hk.Ats_RN;
 
 	panel[35] = g_hk.Ats_Confirm;
 	panel[36] = g_hk.Replace;
-
-	panel[40] = (g_hk.Route == ROUTE_HANSHIN) && (g_hk.Ats_20 || g_hk.Ats_30 || g_hk.Ats_50 || g_hk.Ats_70 || g_hk.Ats_80 || g_hk.Ats_F); // 有コード
-	panel[41] = (g_hk.Route == ROUTE_HANSHIN) && g_hk.Ats_0; // 危険域
-	panel[42] = (g_hk.Route == ROUTE_HANSHIN); // 阪神線
 
 	panel[50] = vehicleState.BcPressure < 100 ? 10 : vehicleState.BcPressure / 100; // Bc100の桁
 	panel[51] = vehicleState.BcPressure < 10 ? 0 : vehicleState.BcPressure / 10 - (panel[50] % 10) * 10; // Bc10の桁
@@ -206,9 +203,6 @@ ATS_API void WINAPI SetBeaconData(ATS_BEACONDATA beaconData)
 {
 	switch(beaconData.Type)
 	{
-	case ATS_BEACON_ROUTE: // 事業者設定
-		g_hk.pickRoute(beaconData.Optional);
-		break;
 	case ATS_BEACON_LIMIT: // 最高速度設定
 		g_hk.pickLimit(beaconData.Optional);
 		break;

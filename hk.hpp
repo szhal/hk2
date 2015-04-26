@@ -14,13 +14,6 @@
 #define SIGNAL_S 5 // S70
 #define SIGNAL_N 6 // N
 
-#define SPEED_R 0 // R
-#define SPEED_YY 30+1 // YY
-#define SPEED_Y 50+1 // Y
-#define SPEED_YG 70+1 // YG
-#define SPEED_S 70+1 // S1
-#define SPEED_N 0 // N
-
 #define LIMIT_F 0 // FREERUN / 15Hz
 #define LIMIT_80 1 // 80km/h / 50.5Hz
 #define LIMIT_70 2 // 70km/h / 20Hz
@@ -32,10 +25,6 @@
 #define ATSEB_NONE 0 // ATSフリー
 #define ATSEB_LIMIT 1 // ATS減速後緩解
 #define ATSEB_STOP 2 // ATS絶対停止
-
-#define ROUTE_HANKYU 0 // 阪急線
-#define ROUTE_HANSHIN 1 // 阪神線
-#define ROUTE_SANYOU 2 // 山陽線
 
 // #define MAX_SPEED 115+1 // 最高速度
 
@@ -54,13 +43,8 @@
 #define IND_R80 12 // 赤80<点滅>
 #define IND_RF 13 // 赤F<点滅>
 #define IND_P 14 // P
-// DigitalNumberここまで
-/*
-#define IND_N 15 // N
-#define IND_HP 16 // HP
-#define IND_CONF 17 // 確認
-#define IND_REPL 18 // 入換
-*/
+#define IND_20L 15 // 20<左より>
+#define IND_R20L 16 // 赤20<点滅、左より>
 
 class CHk
 {
@@ -123,6 +107,8 @@ private:
 		Ats_P = 0; // P
 		Ats_N = 0; // N
 		Ats_HP = 0; // HP
+		Ats_RN = 0; // 赤N
+		Ats_Confirm = 0; // 確認<点滅>
 	}
 
 public:
@@ -139,7 +125,7 @@ public:
 	int Route; // 事業者
 
 	int Indicator; // 表示器シフト
-	// 透過-0-20-30-50-70-80-F-赤20-赤30-赤50-赤70-赤80-赤F-P(赤では点滅)
+	// 透過-0-20-30-50-70-80-F-赤20-赤30-赤50-赤70-赤80-赤F-P-20N(赤では点滅)
 
 	int Ats_P; // P
 	int Ats_0; // 0
@@ -157,7 +143,8 @@ public:
 	int Ats_RF; // 赤F<点滅>
 	int Ats_N; // N
 	int Ats_HP; // HP
-	int Ats_Confirm; // 確認
+	int Ats_RN; // 赤N
+	int Ats_Confirm; // 確認<点滅>
 
 	int Confirm; // 確認
 	int Replace; // 入換
@@ -171,7 +158,6 @@ public:
 	void initialize()
 	{
 		AtsBrake = 0;
-		Route = ROUTE_HANKYU;
 
 		m_door = 0;
 		m_signal = 0;
@@ -210,13 +196,13 @@ public:
 				break;
 			}
 		case SIGNAL_YG: // 70
-			if(speed > SPEED_YG){m_result_sig = ATSEB_LIMIT;}
+			if(speed > 70+1){m_result_sig = ATSEB_LIMIT;}
 			else{m_result_sig = ATSEB_NONE;}
 			break;
 		case SIGNAL_Y: // 50
 			if(!m_stepA && !m_stepS) // A点･S点でない
 			{
-				if(speed > SPEED_Y){m_result_sig = ATSEB_LIMIT;}
+				if(speed > 50+1){m_result_sig = ATSEB_LIMIT;}
 				else{m_result_sig = ATSEB_NONE;}
 				break;
 			}
@@ -224,7 +210,7 @@ public:
 		case SIGNAL_S: // REPLACE
 			if(!m_stepS) // S点でない
 			{
-				if(speed > SPEED_YY){m_result_sig = ATSEB_LIMIT;}
+				if(speed > 30+1){m_result_sig = ATSEB_LIMIT;}
 				else{m_result_sig = ATSEB_NONE;}
 			}
 			else // S点20
@@ -245,10 +231,13 @@ public:
 			m_distHp -= def; // 残り距離を減算する
 			float pattern = speed * speed / (HQ_HP_DECELEATION); // パターン速度
 			if(pattern >= m_distHp){m_result_hp = ATSEB_LIMIT;} // ブレーキ動作
-			else{m_result_hp = ATSEB_NONE;} // 減速後緩解 
+			else{m_result_hp = ATSEB_NONE;} // 減速後緩解
 
 			// HPは設定距離598mの8割走行(478.4m/-119.6m)かつ停止検知でリセット
-			if(m_distHp < 119.6F && m_distHp >= 10.0F && speed == 0)
+
+			// if(m_distHp < 119.6F && m_distHp >= 10.0F && speed == 0)
+			// 10m以上のオーバー時に高速パターンをリセットできないので距離を見ない仕様に変更
+			if(m_distHp < 119.6F && speed == 0)
 			{
 				m_hPat = 0;
 			}
@@ -332,16 +321,34 @@ public:
 				}
 				else
 				{
-					Indicator = IND_20;
-					Ats_20 = 1;
+					if(m_signal == SIGNAL_R)
+					{
+						if(m_hPat) // 高速パターンでは赤20(左より)点滅と赤N(右より)点灯
+						{
+							Indicator = IND_R20L * blink;
+							Ats_R20 = blink;
+							Ats_RN = 1;
+						}
+						else // それ以外では白20(左より)点灯と赤N(右より)点灯
+						{
+							Indicator = IND_20L;
+							Ats_20 = 1;
+							Ats_RN = 1;
+						}
+					}
+					else
+					{
+						Indicator = IND_20;
+						Ats_20 = 1;
+					}
 				}
 			}
 			break;
 		case SIGNAL_S: // REPLACE
-		case SIGNAL_N: // N
 			Indicator = IND_C;
 			Ats_N = 1;
 			break;
+		case SIGNAL_N: // N
 		case SIGNAL_R: // 0
 		default:
 			Indicator = IND_0;
@@ -550,12 +557,6 @@ public:
 		m_stepA = 0; // 閉そく内地点の初期化
 		m_stepS = 0;
 		m_lPat = 0; // 低速パターンのリセット
-	}
-
-	// 事業者設定を通過した時に実行する
-	void pickRoute(int data=0)
-	{
-		Route = data % 3;
 	}
 
 	// 最高速度設定を通過した時に実行する
