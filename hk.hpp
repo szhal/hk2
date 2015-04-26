@@ -596,13 +596,10 @@ public:
 			{
 				m_flat15 = 1;
 			}
-			else if(m_signal == SIGNAL_YY && Replace)
-			{
-				Replace = 0; // 入換モード無効化
-			}
 			else if((m_signal == SIGNAL_YY || m_signal == SIGNAL_S) && signal == SIGNAL_R) // 通常
 			{
 				m_stepS = 1;
+				if(Replace){Replace = 0;} // 入換モード無効化
 			}
 		}
 	}
