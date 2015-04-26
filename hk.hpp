@@ -284,11 +284,27 @@ public:
 		// 表示灯をリセット
 		resetIndicator();
 
+		// 高速パターンによる表示灯
+		if(m_hPat) // 高速パターン
+		{
+			if(!m_door || m_distHp < 10.0F) // オーバーでNに移行
+			{
+				Indicator = IND_C;
+				Ats_N = m_leaveAccept; // N
+			}
+			else // 赤F
+			{
+				Indicator = blink ? IND_F : IND_C;
+				Ats_F = 1;
+				Ats_HP = blink ? 1 : 0; // HP
+			}
+		}
+
 		// 信号による表示灯
 		switch(m_signal)
 		{
 		case SIGNAL_G:
-			if(!m_stepA) // フリーラン(A点でない)
+			if(!m_stepA && m_hPat) // フリーラン(A点でない)･高速パターンでない
 			{
 				Indicator = IND_F;
 				Ats_F = 1;
@@ -323,7 +339,7 @@ public:
 					if(m_hPat) // 高速パターンでは赤20(左より)点滅と赤N(右より)点灯
 					{
 						Indicator = IND_R20L * blink;
-						Ats_RN = blink;
+						Ats_RN = 1;
 					}
 					else // それ以外では白20(左より)点灯と赤N(右より)点灯
 					{
@@ -349,22 +365,6 @@ public:
 			Indicator = IND_0;
 			Ats_0 = 1;
 			break;
-		}
-
-		// 高速パターンによる表示灯
-		if(m_hPat) // 高速パターン
-		{
-			if(!m_door || m_distHp < 10.0F) // オーバーでNに移行
-			{
-				Indicator = IND_C;
-				Ats_N = m_leaveAccept; // N
-			}
-			else // 赤F
-			{
-				Indicator = blink ? IND_F : IND_C;
-				Ats_F = 1;
-				Ats_HP = blink ? 1 : 0; // HP
-			}
 		}
 
 		// 新A照査による表示灯
