@@ -55,10 +55,12 @@
 #define IND_RF 13 // 赤F<点滅>
 #define IND_P 14 // P
 // DigitalNumberここまで
+/*
 #define IND_N 15 // N
 #define IND_HP 16 // HP
 #define IND_CONF 17 // 確認
 #define IND_REPL 18 // 入換
+*/
 
 class CHk
 {
@@ -68,7 +70,6 @@ private:
 	int m_limitSpeed; // 最高速度
 
 	int m_stepA; // 閉そく内A点の状態
-	// int m_stepT; // 閉そく内T点の状態
 	int m_stepS; // 閉そく内S点の状態
 	int m_flat15; // 入換モード15km/h照査
 
@@ -122,11 +123,6 @@ private:
 		Ats_P = 0; // P
 		Ats_N = 0; // N
 		Ats_HP = 0; // HP
-
-		for(int i=0;i<19;i++)
-		{
-			IndicatorPL[i] = 0; // 単一表示
-		}
 	}
 
 public:
@@ -144,7 +140,6 @@ public:
 
 	int Indicator; // 表示器シフト
 	// 透過-0-20-30-50-70-80-F-赤20-赤30-赤50-赤70-赤80-赤F-P(赤では点滅)
-	int IndicatorPL[19]; // 単一表示
 
 	int Ats_P; // P
 	int Ats_0; // 0
@@ -230,10 +225,10 @@ public:
 			if(!m_stepS) // S点でない
 			{
 				if(speed > SPEED_YY){m_result_sig = ATSEB_LIMIT;}
+				else{m_result_sig = ATSEB_NONE;}
 			}
 			else // S点20
 			{
-				// 入換の状態でS点通過すると入換は無効
 				if(speed > 20+1){m_result_sig = ATSEB_STOP;}
 			}
 			break;
@@ -381,7 +376,7 @@ public:
 			if(m_signal > SIGNAL_R)
 			{
 				resetIndicator();
-				Indicator = blink ? IND_20 : IND_C; // 赤20
+				Indicator = IND_20; // 20
 				Ats_20 = 1;
 			}
 			break;
@@ -389,7 +384,7 @@ public:
 			if(m_signal > SIGNAL_YY || (m_signal == SIGNAL_Y && !m_stepA) || !m_stepS)
 			{
 				resetIndicator();
-				Indicator = blink ? IND_30 : IND_C; // 赤30
+				Indicator = IND_30; // 30
 				Ats_30 = 1;
 			}
 			break;
@@ -397,24 +392,24 @@ public:
 			if(m_signal > SIGNAL_Y || (m_signal == SIGNAL_Y && !m_stepA) || !m_stepS)
 			{
 				resetIndicator();
-				Indicator = blink ? IND_50 : IND_C; // 赤50
-				Ats_50 = blink ? 1 : 0;
+				Indicator = IND_50; // 50
+				Ats_50 = 1;
 			}
 			break;
 		case LIMIT_70:
 			if(m_signal > SIGNAL_YG || (m_signal == SIGNAL_G && !m_stepA))
 			{
 				resetIndicator();
-				Indicator = blink ? IND_70 : IND_C; // 赤70
-				Ats_70 = blink ? 1 : 0;
+				Indicator = IND_70; // 70
+				Ats_70 = 1;
 			}
 			break;
 		case LIMIT_80:
 			if(m_signal == SIGNAL_G && !m_stepA)
 			{
 				resetIndicator();
-				Indicator = blink ? IND_80 : IND_C; // 赤80
-				Ats_80 = blink ? 1 : 0;
+				Indicator = IND_80; // 80
+				Ats_80 = 1;
 			}
 			break;
 		case LIMIT_F:
@@ -422,10 +417,10 @@ public:
 			break;
 		}
 
-		// 高速パターンか新A点有効なとき信号照査・新A点照査の表示は赤色の点滅
-		if((m_hPat || m_limit) && Indicator > 1 && Indicator < 8)
+		// 高速パターン有効なとき信号照査・新A点照査の表示は赤色の点滅
+		if(m_hPat && Indicator > 1 && Indicator < 7)
 		{
-			Indicator += 6; // 表示をシフトして赤色にする
+			Indicator = (Indicator + 6) * blink; // 表示をシフトして赤色で点滅させる
 		}
 
 		// 入換モード
@@ -517,7 +512,6 @@ public:
 		{
 			AtsBrake = ATSEB_NONE;
 			m_result_sig = m_result_lim = ATSEB_NONE;
-			m_leaveAccept = 0; // 過走時では出発承認タイマーをキャンセル
 		}
 	}
 
@@ -598,11 +592,18 @@ public:
 	{
 		if(*TrainSpeed > 0)
 		{
-			if(m_signal == SIGNAL_S && (signal == SIGNAL_N || data > 0)) // 入換モード
+			if(m_signal == SIGNAL_S) // 入換モード
 			{
-				m_flat15 = 1;
+				if(signal == SIGNAL_N || data > 0)
+				{
+					m_flat15 = 1;
+				}
+				else
+				{
+					Replace = 0; // 入換モード無効化
+				}
 			}
-			else if((m_signal == SIGNAL_Y || m_signal == SIGNAL_YY || m_signal == SIGNAL_S) && signal == SIGNAL_R) // 通常
+			else if((m_signal == SIGNAL_YY || m_signal == SIGNAL_S) && signal == SIGNAL_R) // 通常
 			{
 				m_stepS = 1;
 			}
