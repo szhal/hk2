@@ -234,7 +234,6 @@ public:
 			else{m_result_hp = ATSEB_NONE;} // 減速後緩解
 
 			// HPは設定距離598mの8割走行(478.4m/-119.6m)かつ停止検知でリセット
-
 			// if(m_distHp < 119.6F && m_distHp >= 10.0F && speed == 0)
 			// 10m以上のオーバー時に高速パターンをリセットできないので距離を見ない仕様に変更
 			if(m_distHp < 119.6F && speed == 0)
@@ -469,7 +468,7 @@ public:
 		AtsBrake = maximum(maximum(m_result_sig,m_result_hp), m_result_lim);
 
 		// 出発承認合図タイマー
-		if(m_leaveAccept) // 高速パターンからN
+		if(!m_door && m_leaveAccept) // 高速パターンからN
 		{
 			m_leaveAccept = leaveAcceptTimer();
 			if(m_leaveAccept == 0)
