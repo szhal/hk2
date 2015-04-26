@@ -648,12 +648,9 @@ public:
 	// 新A点を通過した時に時に実行する
 	void passedA2(int data)
 	{
-		if(*TrainSpeed > 0)
+		if(data == 0 || m_limit < data) // リセットか照査速度落下のとき
 		{
-			if(data == 0 || m_limit < data) // リセットか照査速度落下のとき
-			{
-				m_limit = data;
-			}
+			m_limit = data;
 		}
 	}
 
