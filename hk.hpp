@@ -284,27 +284,11 @@ public:
 		// 表示灯をリセット
 		resetIndicator();
 
-		// 高速パターンによる表示灯
-		if(m_hPat) // 高速パターン
-		{
-			if(!m_door || m_distHp < 10.0F) // オーバーでNに移行
-			{
-				Indicator = IND_C;
-				Ats_N = m_leaveAccept; // N
-			}
-			else // 赤F
-			{
-				Indicator = blink ? IND_F : IND_C;
-				Ats_F = 1;
-				Ats_HP = blink ? 1 : 0; // HP
-			}
-		}
-
 		// 信号による表示灯
 		switch(m_signal)
 		{
 		case SIGNAL_G:
-			if(!m_stepA && m_hPat) // フリーラン(A点でない)･高速パターンでない
+			if(!m_stepA) // フリーラン(A点でない)
 			{
 				Indicator = IND_F;
 				Ats_F = 1;
@@ -365,6 +349,20 @@ public:
 			Indicator = IND_0;
 			Ats_0 = 1;
 			break;
+		}
+
+		// 高速パターンによる表示灯
+		if(m_hPat) // 高速パターン
+		{
+			if(!m_door || m_distHp < 10.0F) // オーバーでNに移行
+			{
+				Indicator = IND_0;
+				Ats_N = m_leaveAccept; // N
+			}
+			else // 赤F
+			{
+				Ats_HP = blink ? 1 : 0; // HP
+			}
 		}
 
 		// 新A照査による表示灯
@@ -511,7 +509,7 @@ public:
 		if(*BrakeNotch == EmgBrake)
 		{
 			AtsBrake = ATSEB_NONE;
-			m_result_sig = m_result_lim = ATSEB_NONE;
+			m_result_sig = m_result_hp = m_result_lim = ATSEB_NONE;
 		}
 	}
 
@@ -524,6 +522,9 @@ public:
 			{
 				Confirm = 1;
 				m_confirmBuzz = ATS_SOUND_PLAYLOOPING;
+
+				AtsBrake = ATSEB_NONE;
+				m_result_sig = m_result_hp = m_result_lim = ATSEB_NONE;
 			}
 			else
 			{
