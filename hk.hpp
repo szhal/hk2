@@ -321,26 +321,22 @@ public:
 				}
 				else
 				{
-					if(m_signal == SIGNAL_R)
+					if(m_hPat) // 高速パターンでは赤20(左より)点滅と赤N(右より)点灯
 					{
-						if(m_hPat) // 高速パターンでは赤20(左より)点滅と赤N(右より)点灯
-						{
-							Indicator = IND_R20L * blink;
-							Ats_R20 = blink;
-							Ats_RN = 1;
-						}
-						else // それ以外では白20(左より)点灯と赤N(右より)点灯
-						{
-							Indicator = IND_20L;
-							Ats_20 = 1;
-							Ats_RN = 1;
-						}
+						Indicator = IND_R20L * blink;
+						Ats_RN = blink;
 					}
-					else
+					else // それ以外では白20(左より)点灯と赤N(右より)点灯
+					{
+						Indicator = IND_20L;
+						Ats_RN = 1;
+					}
+					/*
 					{
 						Indicator = IND_20;
 						Ats_20 = 1;
 					}
+					*/
 				}
 			}
 			break;
@@ -476,12 +472,13 @@ public:
 		AtsBrake = maximum(maximum(m_result_sig,m_result_hp), m_result_lim);
 
 		// 出発承認合図タイマー
-		if(!m_door && m_leaveAccept) // 高速パターンからN
+		if(m_leaveAccept) // 高速パターンからN
 		{
 			m_leaveAccept = leaveAcceptTimer();
 			if(m_leaveAccept == 0)
 			{
 				m_hPat = 0; // 高速パターンをリセット
+				m_result_hp = ATSEB_NONE;
 			}
 		}
 
@@ -629,6 +626,7 @@ public:
 			else if(data == 2) // 高速パターン取消
 			{
 				m_hPat = 0;
+				m_result_hp = ATSEB_NONE;
 			}
 		}
 	}
