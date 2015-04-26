@@ -419,8 +419,8 @@ public:
 			break;
 		}
 
-		// 高速パターン有効なとき信号照査・新A点照査の表示は赤色の点滅
-		if(m_hPat && Indicator > 1 && Indicator < 7)
+		// 高速パターンか新A点有効なとき信号照査・新A点照査の表示は赤色の点滅
+		if((m_hPat || m_limit) && Indicator > 1 && Indicator < 8)
 		{
 			Indicator += 6; // 表示をシフトして赤色にする
 		}
