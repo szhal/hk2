@@ -364,9 +364,12 @@ public:
 			}
 			else // 赤F
 			{
-				Indicator = blink ? IND_RF : IND_C;
-				Ats_RF = 1;
-				Ats_HP = blink ? 1 : 0; // HP
+				if(m_signal == SIGNAL_G)
+				{
+					Indicator = blink ? IND_RF : IND_C;
+					Ats_RF = 1;
+					Ats_HP = blink ? 1 : 0; // HP
+				}
 			}
 		}
 
@@ -378,7 +381,7 @@ public:
 			if(m_signal > SIGNAL_R)
 			{
 				resetIndicator();
-				Indicator = IND_20; // 20
+				Indicator = blink ? IND_20 : IND_C; // 赤20
 				Ats_20 = 1;
 			}
 			break;
@@ -386,7 +389,7 @@ public:
 			if(m_signal > SIGNAL_YY || (m_signal == SIGNAL_Y && !m_stepA) || !m_stepS)
 			{
 				resetIndicator();
-				Indicator = IND_30; // 赤30
+				Indicator = blink ? IND_30 : IND_C; // 赤30
 				Ats_30 = 1;
 			}
 			break;
@@ -424,7 +427,6 @@ public:
 		{
 			Indicator += 6; // 表示をシフトして赤色にする
 		}
-		
 
 		// 入換モード
 		if(Replace) // 30
