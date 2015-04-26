@@ -362,12 +362,9 @@ public:
 			}
 			else // 赤F
 			{
-				if(m_signal == SIGNAL_G)
-				{
-					Indicator = blink ? IND_RF : IND_C;
-					Ats_RF = 1;
-					Ats_HP = blink ? 1 : 0; // HP
-				}
+				Indicator = blink ? IND_F : IND_C;
+				Ats_F = 1;
+				Ats_HP = blink ? 1 : 0; // HP
 			}
 		}
 
@@ -421,7 +418,7 @@ public:
 		}
 
 		// 高速パターン有効なとき信号照査・新A点照査の表示は赤色の点滅
-		if(m_hPat && Indicator > 1 && Indicator < 7)
+		if(m_hPat && Indicator > 1 && Indicator < 8)
 		{
 			Indicator = (Indicator + 6) * blink; // 表示をシフトして赤色で点滅させる
 		}
@@ -652,5 +649,4 @@ public:
 			m_limit = data;
 		}
 	}
-
 };	// CHk
