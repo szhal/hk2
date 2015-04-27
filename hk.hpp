@@ -356,6 +356,7 @@ public:
 			{
 				Indicator = IND_0;
 				Ats_N = m_leaveAccept; // N
+				Ats_RN = 0;
 			}
 			else // 赤F
 			{
