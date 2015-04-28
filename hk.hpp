@@ -4,7 +4,9 @@
 #include <math.h>
 
 #define maximum(a,b) ((a)>(b)?(a):(b))
-#define HQ_HP_DECELEATION (19.5F) // 減速度[km/h/s] * 7.2
+//2015.4.29 SzHaL 7000系列では減速度3.0km/h/sの方が実物動作に近いので補正。今後形式別に数値設定するかも？
+//#define HQ_HP_DECELEATION (19.5F) // 減速度2.7[km/h/s] * 7.2
+#define HQ_HP_DECELEATION (21.6F) // 減速度3.0[km/h/s] * 7.2
 
 #define SIGNAL_R 0 // 0
 #define SIGNAL_YY 1 // 30
@@ -445,6 +447,10 @@ public:
 		if(Confirm) // 20
 		{
 			m_result_sig = ATSEB_NONE;
+			//2015.4.29 SzHal 10m以上過走した際のATSブレーキの強制解除
+			m_hPat = 0;
+			m_result_hp = ATSEB_NONE;
+
 			resetIndicator();
 
 			if(speed > 20+1)
