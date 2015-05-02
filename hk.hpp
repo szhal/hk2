@@ -102,6 +102,8 @@ private:
 		Ats_70 = 0; // 70
 		Ats_80 = 0; // 80
 		Ats_F = 0; // F
+		Ats_R20 = 0; //赤20<点滅>
+		Ats_R30 = 0; //赤30<点滅>
 		Ats_R50 = 0; //赤50<点滅>
 		Ats_R70 = 0; // 赤70<点滅>
 		Ats_R80 = 0; // 赤80<点滅>
@@ -297,12 +299,24 @@ public:
 		case SIGNAL_YG: // 70
 			Indicator = IND_70;
 			Ats_70 = 1;
+
+				if(m_hPat) // 高速パターン
+				{
+					Ats_R70 = blink ? 1 : 0;
+				}
+
 			break;
 		case SIGNAL_Y: // 50
 			if(!m_stepA || !m_stepS) // A点･S点でない
 			{
 				Indicator = IND_50;
 				Ats_50 = 1;
+				
+				if(m_hPat) // 高速パターン
+				{
+					Ats_R50 = blink ? 1 : 0;
+				}
+
 				break;
 			}
 		case SIGNAL_YY: // 30
@@ -310,6 +324,11 @@ public:
 			{
 				Indicator = IND_30;
 				Ats_30 = 1;
+
+				if(m_hPat) // 高速パターン
+				{
+					Ats_R30 = blink ? 1 : 0;
+				}
 			}
 			else // 20
 			{
@@ -324,11 +343,14 @@ public:
 					{
 						Indicator = IND_R20L * blink;
 						Ats_RN = 1;
+						Ats_20 = 1;
+						Ats_R20 = 1 * blink;
 					}
 					else // それ以外では白20(左より)点灯と赤N(右より)点灯
 					{
 						Indicator = IND_20L;
 						Ats_RN = 1;
+						Ats_20 = 1;
 					}
 					/*
 					{
@@ -351,20 +373,6 @@ public:
 			break;
 		}
 
-		// 高速パターンによる表示灯
-		if(m_hPat) // 高速パターン
-		{
-			if(!m_door || m_distHp < 10.0F) // オーバーでNに移行
-			{
-				Indicator = IND_0;
-				Ats_N = m_leaveAccept; // N
-				Ats_RN = 0;
-			}
-			else // 赤F
-			{
-				Ats_HP = blink ? 1 : 0; // HP
-			}
-		}
 
 		// 新A照査による表示灯
 		switch(m_limit)
@@ -376,6 +384,16 @@ public:
 				resetIndicator();
 				Indicator = IND_20; // 20
 				Ats_20 = 1;
+
+				if(m_hPat) // 高速パターン
+				{
+					resetIndicator();
+					Ats_HP = blink ? 1 : 0; // HP
+					Ats_R20 = blink ? 1 : 0;
+					Ats_20 = 1;
+					Indicator = IND_R20 * blink;
+				}
+
 			}
 			break;
 		case LIMIT_30:
@@ -384,6 +402,16 @@ public:
 				resetIndicator();
 				Indicator = IND_30; // 30
 				Ats_30 = 1;
+
+				if(m_hPat) // 高速パターン
+				{
+					resetIndicator();
+					Ats_HP = blink ? 1 : 0; // HP
+					Ats_R30 = blink ? 1 : 0;
+					Ats_30 = 1;
+					Indicator = IND_R30 * blink;
+				}
+
 			}
 			break;
 		case LIMIT_50:
@@ -392,6 +420,15 @@ public:
 				resetIndicator();
 				Indicator = IND_50; // 50
 				Ats_50 = 1;
+
+				if(m_hPat) // 高速パターン
+				{
+					resetIndicator();
+					Ats_HP = blink ? 1 : 0; // HP
+					Ats_R50 = blink ? 1 : 0;
+					Ats_50 = 1;
+					Indicator = IND_R50 * blink;
+				}
 			}
 			break;
 		case LIMIT_70:
@@ -400,6 +437,16 @@ public:
 				resetIndicator();
 				Indicator = IND_70; // 70
 				Ats_70 = 1;
+
+				if(m_hPat) // 高速パターン
+				{
+					resetIndicator();
+					Ats_HP = blink ? 1 : 0; // HP
+					Ats_R70 = blink ? 1 : 0;
+					Ats_70 = 1;
+					Indicator = IND_R70 * blink;
+				}
+
 			}
 			break;
 		case LIMIT_80:
@@ -408,6 +455,16 @@ public:
 				resetIndicator();
 				Indicator = IND_80; // 80
 				Ats_80 = 1;
+
+				if(m_hPat) // 高速パターン
+				{
+					resetIndicator();
+					Ats_HP = blink ? 1 : 0; // HP
+					Ats_R80 = blink ? 1 : 0;
+					Ats_80 = 1;
+					Indicator = IND_R80 * blink;
+				}
+
 			}
 			break;
 		case LIMIT_F:
@@ -420,6 +477,24 @@ public:
 		{
 			Indicator = (Indicator + 6) * blink; // 表示をシフトして赤色で点滅させる
 		}
+
+		// 高速パターンによる表示灯
+		if(m_hPat) // 高速パターン
+		{
+			if(!m_door || m_distHp < 10.0F) // オーバーでNに移行
+			{
+				resetIndicator();
+				Indicator = IND_C;
+				Ats_N = m_leaveAccept; // N
+				Ats_RN = 0;
+				Ats_RF = 0;
+			}
+			else // 赤F
+			{
+				Ats_HP = blink ? 1 : 0; // HP
+			}
+		}
+
 
 		// 入換モード
 		if(Replace) // 30
@@ -528,6 +603,7 @@ public:
 				Confirm = 1;
 				m_confirmBuzz = ATS_SOUND_PLAYLOOPING;
 
+				m_hPat = m_lPat = 0;
 				AtsBrake = ATSEB_NONE;
 				m_result_sig = m_result_hp = m_result_lim = ATSEB_NONE;
 			}
