@@ -5,8 +5,9 @@
 
 #define maximum(a,b) ((a)>(b)?(a):(b))
 //2015.4.29 SzHaL 7000系列では減速度3.0km/h/sの方が実物動作に近いので補正。今後形式別に数値設定するかも？
-//#define HQ_HP_DECELEATION (19.5F) // 減速度2.7[km/h/s] * 7.2
-#define HQ_HP_DECELEATION (21.6F) // 減速度3.0[km/h/s] * 7.2
+//2015.5.3 SzHaL  再度修正
+#define HQ_HP_DECELEATION (19.5F) // 減速度2.7[km/h/s] * 7.2
+//#define HQ_HP_DECELEATION (21.6F) // 減速度3.0[km/h/s] * 7.2
 
 #define SIGNAL_R 0 // 0
 #define SIGNAL_YY 1 // 30
@@ -238,7 +239,12 @@ public:
 			else{m_result_hp = ATSEB_NONE;} // 減速後緩解
 
 			// HPは設定距離598mの8割走行(478.4m/-119.6m)かつ停止検知でリセット
-			if(m_distHp < 119.6F && m_distHp >= 10.0F && speed == 0)
+			//2015.5.3 リセット条件を速度3km/h以下に変更と、パターン終端超えた場合は非常制動に。
+			if(m_distHp <= 10.0F && speed == 0)
+			{
+				m_result_hp = ATSEB_STOP;
+			}
+			if(m_distHp < 119.6F && m_distHp >= 10.0F && speed <= 3)
 			{
 				m_hPat = 0;
 			}
@@ -294,6 +300,12 @@ public:
 			{
 				Indicator = IND_F;
 				Ats_F = 1;
+
+				if(m_hPat) // 高速パターン
+				{
+					Ats_F = 0;
+					Ats_RF = blink ? 1 : 0; //2015.5.3 SzHal 高速パターン時F点滅を追加
+				}
 				break;
 			}
 		case SIGNAL_YG: // 70
@@ -351,6 +363,13 @@ public:
 						Indicator = IND_20L;
 						Ats_RN = 1;
 						Ats_20 = 1;
+
+							if(speed <= 3) // 2015.5.3 SzHaL 3km/h以下で白20NからNへの移行
+							{
+							resetIndicator();
+							Indicator = IND_C;
+							Ats_N = 1;
+							}
 					}
 					/*
 					{
@@ -590,6 +609,7 @@ public:
 		{
 			AtsBrake = ATSEB_NONE;
 			m_result_sig = m_result_hp = m_result_lim = ATSEB_NONE;
+			m_stepA = m_stepS = 0; //2015.5.3 SzHaL N表示後、力行が必要な時のS標20照査解除
 		}
 	}
 
@@ -688,7 +708,7 @@ public:
 			if((data == 0 || data > 2) && m_hPat == 0)
 			{
 				m_hPat = 1;
-				m_distHp = 598; // 588[m]地点 + 10[m]余裕
+				m_distHp = 748; // 588[m]地点 + 10[m]余裕 //2015.5.3 SzHaL 150m追加
 				m_beginPattern = ATS_SOUND_PLAY; // パターン発生
 				m_leaveAccept = 1; // 出発承認合図
 
@@ -705,6 +725,10 @@ public:
 			{
 				m_hPat = 0;
 				m_result_hp = ATSEB_NONE;
+			else if(data == 3) // 2015.5.3 SzHaL補正用ループコイル 2 (ホーム手前200m地点70キロ照査に使用)
+			{
+				m_distHp = 270; //
+			}
 			}
 		}
 	}
