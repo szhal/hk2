@@ -68,6 +68,7 @@ ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int
 	g_time = vehicleState.Time;
 	g_speed = vehicleState.Speed;
 
+	g_hk.BcPressure = vehicleState.BcPressure; // BC圧力
 	g_hk.execute();
 
 	// ハンドル出力
@@ -121,18 +122,18 @@ ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int
 	panel[22] = g_hk.Ats_R50;
 	panel[23] = g_hk.Ats_R70;
 	panel[24] = g_hk.Ats_R80;
-	panel[25] = g_hk.Ats_RF;
-	panel[26] = g_hk.Ats_P;
+	// panel[25] = g_hk.Ats_RF;
+	panel[26] = g_hk.Ats_P; // --> panel25
 
 	panel[30] = g_hk.Ats_N;
 	panel[31] = g_hk.Ats_HP;
-	panel[32] = g_hk.Ats_RN;
+	panel[32] = g_hk.Ats_RN; // --> panel5
 
 	panel[35] = g_hk.Ats_Confirm;
 	panel[36] = g_hk.Replace;
 
-	panel[50] = vehicleState.BcPressure < 100 ? 10 : vehicleState.BcPressure / 100; // Bc100の桁
-	panel[51] = vehicleState.BcPressure < 10 ? 0 : vehicleState.BcPressure / 10 - (panel[50] % 10) * 10; // Bc10の桁
+	panel[50] = g_hk.DigitalBc[0]; // Bc100の桁
+	panel[51] = g_hk.DigitalBc[1]; // Bc10の桁
 
 	// サウンド出力
 	sound[0] = g_hk.BeginPattern; // パターン発生
@@ -220,7 +221,7 @@ ATS_API void WINAPI SetBeaconData(ATS_BEACONDATA beaconData)
 		g_hk.passedHP(beaconData.Signal, beaconData.Optional);
 		break;
 	case ATS_BEACON_LP: // 新型B3点(LP点)
-		g_hk.passedLP(beaconData.Signal);
+		g_hk.passedLP(beaconData.Signal, beaconData.Optional);
 		break;
 	case ATS_BEACON_A2: // 新型A点
 		g_hk.passedA2(beaconData.Optional);
