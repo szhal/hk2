@@ -725,10 +725,10 @@ public:
 			{
 				m_hPat = 0;
 				m_result_hp = ATSEB_NONE;
+			}
 			else if(data == 3) // 2015.5.3 SzHaL補正用ループコイル 2 (ホーム手前200m地点70キロ照査に使用)
 			{
 				m_distHp = 270; //
-			}
 			}
 		}
 	}
