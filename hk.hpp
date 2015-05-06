@@ -6,7 +6,7 @@
 #define maximum(a,b) ((a)>(b)?(a):(b))
 
 #define HQ_HP_DECELEATION_1 (19.5F) // 減速度2.7[km/h/s] * 7.2
-#define HQ_HP_DECELEATION_2 (24.5F) // 減速度3.4[km/h/s] * 7.2
+#define HQ_HP_DECELEATION_2 (23.0F) // 減速度3.2[km/h/s] * 7.2
 #define HQ_HP_DISTANCE_BEGIN (748.0F) // パターン開始の速度は115[km/h](588+10+150)
 
 #define SIGNAL_R 0 // 0
@@ -238,10 +238,17 @@ public:
 			}
 			else // S点20
 			{
-				if(speed > 20+1){m_result_sig = ATSEB_STOP;}
+				// 2015.5.5 SzHaL 通常のS点では緩解
+				if(speed > 20+1){m_result_sig = ATSEB_LIMIT;}
+				else{m_result_sig = ATSEB_NONE;}
 			}
 			break;
 		case SIGNAL_N: // N
+				// 2015.5.5 SzHaL ATS無信号区間は20km/h照査
+				if(speed > 20+1){m_result_sig = ATSEB_LIMIT;}
+				else{m_result_sig = ATSEB_NONE;}
+			break;
+
 		case SIGNAL_R: // 0
 		default:
 			if(speed > 0){m_result_sig = ATSEB_STOP;}
@@ -265,6 +272,7 @@ public:
 			else if(m_distHp < 119.6F && m_distHp >= 10.0F && speed <= 3.0F)
 			{
 				m_hPat = 0;
+				m_result_hp = ATSEB_NONE; // 2015.5.5 SzHaL 高速パターンキャンセル後にブレーキ緩解せず
 			}
 		}
 
@@ -310,30 +318,6 @@ public:
 		// 表示灯をリセット
 		resetIndicator();
 
-		// 高速パターンによる表示灯
-		if(m_hPat) // 高速パターン
-		{
-			// if(!m_door || m_distHp < 10.0F) // オーバーでNに移行
-			// 2015/05/04 変更 unic ドアを見ない
-			if(m_distHp < 10.0F) // オーバーでNに移行
-			{
-				resetIndicator();
-				Indicator = IND_C;
-				Ats_N = 1; // N
-			}
-			else // 赤F
-			{
-				Ats_HP = blink500 ? 1 : 0; // HP
-			}
-
-			/*
-			// 高速パターン有効なとき信号照査・新A点照査の表示は赤色の点滅
-			if(Indicator > 1 && Indicator < 8)
-			{
-				Indicator = (Indicator + 6) * blink500; // 表示をシフトして赤色で点滅させる
-			}
-			*/
-		}
 
 		// 信号による表示灯
 		switch(m_signal)
@@ -412,30 +396,24 @@ public:
 					}
 					else // それ以外では白20(左より)点灯と赤N(右より)点灯
 					{
-						if(speed <= 3.0F) // 2015.5.3 SzHaL 3km/h以下で白20NからNへの移行
-						{
-							Indicator = IND_C;
-							Ats_N = 1;
-						}
-						else
-						{
-							Indicator = IND_20L;
-							Ats_RN = 1;
-							Ats_20 = 1;
-						}
+						// 2015.5.5 SzHaL 停止時N表示は廃止
+						Indicator = IND_20L;
+						Ats_RN = 1;
+						Ats_20 = 1;
 					}
 				}
 			}
 			break;
 		case SIGNAL_S: // REPLACE
-			Indicator = IND_0;
-			Ats_N = 1;
+			// 2015.5.5 SzHaL 資料には入換信号受信の合図がATS70との表記が…(汗)
+			Indicator = IND_5;
+			Ats_70 = 1;
 			break;
 		case SIGNAL_N: // N
 		case SIGNAL_R: // 0
 		default:
-			Indicator = IND_0;
-			Ats_0 = 1;
+			Indicator = IND_C;
+			Ats_N = 1;
 			break;
 		}
 
@@ -553,6 +531,26 @@ public:
 		default:
 			break;
 		}
+
+		// 高速パターンによる表示灯
+		// 2015.5.5 SzHaL 先に処理するとN表示時にF点滅消えず
+		if(m_hPat) // 高速パターン
+		{
+			// if(!m_door || m_distHp < 10.0F) // オーバーでNに移行
+			// 2015/05/04 変更 unic ドアを見ない
+			if(m_distHp < 10.0F) // オーバーでNに移行
+			{
+				resetIndicator();
+				Indicator = IND_C;
+				Ats_N = 1; // N
+			}
+			else // 赤F
+			{
+				Ats_HP = blink500 ? 1 : 0; // HP
+			}
+		}
+
+
 
 		// 入換モード
 		if(Replace) // 30
