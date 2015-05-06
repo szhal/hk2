@@ -406,7 +406,7 @@ public:
 			break;
 		case SIGNAL_S: // REPLACE
 			// 2015.5.5 SzHaL 資料には入換信号受信の合図がATS70との表記が…(汗)
-			Indicator = IND_5;
+			Indicator = IND_70;
 			Ats_70 = 1;
 			break;
 		case SIGNAL_N: // N
@@ -599,7 +599,7 @@ public:
 		}
 
 		// LP解除タイマー
-		if(!m_door && m_lpRelease) // ドア開・LP地上子からタイマーを使う設定があるとき
+		if(m_lpRelease) // LP地上子からタイマーを使う設定があるとき
 		{
 			m_lpRelease = lpReleaseTimer();
 			if(m_lpRelease == 1)

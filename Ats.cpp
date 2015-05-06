@@ -88,15 +88,9 @@ ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int
 	{
 		g_output.Reverser = 0;
 	}
-	if(g_hk.Ats_N)
-	{
-		// 2012/08/14 M†N‚Ì‚Æ‚« —Ís‚Å‚«‚È‚¢‚æ‚¤‚É‚µ‚½
-		g_output.Power = 0;
-	}
-	else
-	{
-		g_output.Power = g_powerNotch;
-	}
+	
+	g_output.Power = g_powerNotch;
+
 	if(g_output.Brake > 0)
 	{
 		g_output.ConstantSpeed = ATS_CONSTANTSPEED_DISABLE;
