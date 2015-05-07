@@ -317,7 +317,6 @@ public:
 		// 表示灯をリセット
 		resetIndicator();
 
-
 		// 信号による表示灯
 		switch(m_signal)
 		{
@@ -549,8 +548,6 @@ public:
 			}
 		}
 
-
-
 		// 入換モード
 		if(Replace) // 30
 		{
@@ -607,6 +604,10 @@ public:
 				Indicator = IND_P; // P
 				Ats_P = 1;
 			}
+			else
+			{
+				m_lPat = 0; // LP解除
+			}
 		}
 
 		// ATSブレーキに結果を更新
@@ -637,10 +638,12 @@ public:
 	{
 		m_door = state;
 
+/*
 		if(state == true) // 閉扉
 		{
 			m_lpRelease = 0;
 		}
+*/
 	}
 
 	// ATSリセットが扱われた時に実行する
@@ -703,7 +706,12 @@ public:
 
 		m_stepA = 0; // 閉そく内地点の初期化
 		m_stepS = 0;
-		m_lPat = 0; // 低速パターンのリセット
+
+		// タイマーでないとき低速パターンのリセット
+		if(m_lpRelease == 0)
+		{
+			m_lPat = 0;
+		}
 	}
 
 	// 最高速度設定を通過した時に実行する
@@ -720,13 +728,15 @@ public:
 	}
 
 	// 出発承認合図タイマー設定を通過した時に実行する
+	/*
 	void passedAcceptTimer(int data)
 	{
 		if(*TrainSpeed > 0)
 		{
-			m_lpReleaseTime = data;
+			m_lpReleaseTime = *Time + data;
 		}
 	}
+	*/
 
 	// A点を通過した時に実行する
 	void passedA(int signal)
@@ -802,7 +812,7 @@ public:
 				if(data > 0)
 				{
 					m_lpRelease = 1; // 出発承認合図
-					m_lpReleaseTime = data; // 出発承認合図タイマー
+					m_lpReleaseTime = data + *Time; // 出発承認合図タイマー
 				}
 			}
 		}
