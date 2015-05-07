@@ -599,10 +599,13 @@ public:
 		{
 			if(lpReleaseTimer())
 			{
-				m_lpRelease = 0;
 				resetIndicator();
 				Indicator = IND_P; // P
 				Ats_P = 1;
+			}
+			else // タイマーおわり
+			{
+				m_lpRelease = 0;
 			}
 		}
 
