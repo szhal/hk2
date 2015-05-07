@@ -73,7 +73,6 @@ private:
 
 	int m_lpRelease; // LP解除タイマー
 	int m_lpReleaseTime; // LP解除までの時間
-	int m_tmrLpRelease; // LP解除タイマー
 
 	int m_nextBcUpdate; // BC表示更新の時刻
 
@@ -86,7 +85,7 @@ private:
 	{
 		int is_keep = 1;
 
-		if(*Time >= m_tmrLpRelease)
+		if(*Time >= m_lpReleaseTime)
 		{
 			is_keep = 0; // リセットする
 		}
@@ -189,7 +188,6 @@ public:
 
 		m_lpRelease = 0;
 		m_lpReleaseTime = 0;
-		m_tmrLpRelease = 0;
 
 		BcPressure = 0;
 		DigitalBc[0] = 0;
@@ -639,10 +637,6 @@ public:
 		if(state == true) // 閉扉
 		{
 			m_lpRelease = 0;
-		}
-		else // 開扉
-		{
-			m_tmrLpRelease = *Time + m_lpReleaseTime;
 		}
 	}
 
