@@ -276,7 +276,7 @@ public:
 		}
 
 		// 低速パターンによる照査
-		if(m_lPat)
+		if(m_lPat || m_lpRelease)
 		{
 			m_distLp -= def; // 残り距離を減算する
 			float pattern = speed * speed / 19.5F; // パターン速度
@@ -594,19 +594,15 @@ public:
 			Ats_Confirm = 0;
 		}
 
-		// LP解除タイマー
+		// LP解除タイマーの表示
 		if(m_lpRelease) // LP地上子からタイマーを使う設定があるとき
 		{
-			m_lpRelease = lpReleaseTimer();
-			if(m_lpRelease == 1)
+			if(lpReleaseTimer())
 			{
+				m_lpRelease = 0;
 				resetIndicator();
 				Indicator = IND_P; // P
 				Ats_P = 1;
-			}
-			else
-			{
-				m_lPat = 0; // LP解除
 			}
 		}
 
@@ -811,8 +807,8 @@ public:
 
 				if(data > 0)
 				{
-					m_lpRelease = 1; // 出発承認合図
-					m_lpReleaseTime = data + *Time; // 出発承認合図タイマー
+					m_lpRelease = 1; // LP解除タイマー
+					m_lpReleaseTime = data + *Time; // LP解除までの時間
 				}
 			}
 		}
