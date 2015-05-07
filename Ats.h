@@ -1,5 +1,5 @@
-#define ATS_BEACON_LIMIT 1 // 最高速度設定
-#define ATS_BEACON_ACCEPT 5 // 出発承認合図
+#define ATS_BEACON_LIMIT 0 // 最高速度設定
+// #define ATS_BEACON_ACCEPT 5 // 出発承認合図
 #define ATS_BEACON_A 10 // 旧来A点/新型B1点
 #define ATS_BEACON_S 11 // 旧来S点/新型B2点/入換15点
 #define ATS_BEACON_HP 15 // 新型HP点

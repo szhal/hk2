@@ -134,6 +134,7 @@ ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int
 	sound[1] = g_hk.ConfirmBuzz; // 確認モードブザー
 	sound[2] = g_hk.SpeedOverBuzz; // 速度超過時ブザー
 	sound[5] = g_hk.ReplaceSw; // 入換スイッチ
+	sound[6] = g_hk.ConfirmButton; // 確認ボタン
 
 	return g_output;
 }
@@ -201,10 +202,10 @@ ATS_API void WINAPI SetBeaconData(ATS_BEACONDATA beaconData)
 	case ATS_BEACON_LIMIT: // 最高速度設定
 		g_hk.pickLimit(beaconData.Optional);
 		break;
-	case ATS_BEACON_ACCEPT: // 出発承認合図
+	// case ATS_BEACON_ACCEPT: // 出発承認合図
 		// 2012/06/08 試験的に廃止
 		//g_hk.passedAcceptTimer(beaconData.Optional);
-		break;
+		// break;
 	case ATS_BEACON_A: // 旧来A点/新型B1点
 		g_hk.passedA(beaconData.Signal);
 		break;

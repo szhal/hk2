@@ -29,8 +29,6 @@
 #define ATSEB_LIMIT 1 // ATS減速後緩解
 #define ATSEB_STOP 2 // ATS絶対停止
 
-// #define MAX_SPEED 115+1 // 最高速度
-
 #define IND_C 0 // 透過
 #define IND_0 1 // 0
 #define IND_20 2 // 20
@@ -79,6 +77,7 @@ private:
 	int m_beginPattern; // パターン発生
 	// int m_confirmBuzz; // 確認モードブザー
 	int m_replaceSw; // 入換スイッチ
+	int m_confirmButton; // 確認ボタン
 
 	// LP解除タイマー
 	int lpReleaseTimer()
@@ -161,6 +160,7 @@ public:
 	int ConfirmBuzz; // 確認モードブザー
 	int SpeedOverBuzz; // 速度超過ブザー
 	int ReplaceSw; // 入換スイッチ
+	int ConfirmButton; // 確認ボタン
 
 	// Initalizeで実行する
 	void initialize()
@@ -196,6 +196,7 @@ public:
 
 		m_beginPattern = ATS_SOUND_STOP;
 		m_replaceSw = ATS_SOUND_STOP;
+		m_confirmButton = ATS_SOUND_STOP;
 	}
 
 	// Elapseで実行する
@@ -619,6 +620,8 @@ public:
 		m_beginPattern = ATS_SOUND_CONTINUE;
 		ReplaceSw = m_replaceSw; // 入換スイッチ
 		m_replaceSw = ATS_SOUND_CONTINUE;
+		ConfirmButton = m_confirmButton; // 確認ボタン
+		m_confirmButton = ATS_SOUND_CONTINUE;
 
 		// BC圧デジタル表示
 		if(*Time >= m_nextBcUpdate)
@@ -661,6 +664,8 @@ public:
 	{
 		if(*BrakeNotch == EmgBrake)
 		{
+			m_confirmButton = ATS_SOUND_PLAY;
+
 			if(Confirm == 0)
 			{
 				Confirm = 1;
@@ -702,11 +707,16 @@ public:
 	}
 
 	// 最高速度設定を通過した時に実行する
-	void pickLimit(int data=115)
+	void pickLimit(int data)
 	{
-		// 列選による最高速度の設定
-		// 現段階では 115km/h を最高速度として固定
-		// m_limitSpeed = 115;
+		if(data == 1) // 宝塚線
+		{
+			m_limitSpeed = 100;
+		}
+		else // それ以外
+		{
+			m_limitSpeed = 115;
+		}
 	}
 
 	// 出発承認合図タイマー設定を通過した時に実行する
