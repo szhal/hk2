@@ -309,6 +309,8 @@ public:
 			else{m_result_lim = ATSEB_NONE;}
 			break;
 		case LIMIT_F:
+		m_result_lim = ATSEB_NONE;
+		//2015.5.9 szhal 新A点照査のATSブレーキが解除されない対策
 		default:
 			break;
 		}
