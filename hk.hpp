@@ -7,7 +7,7 @@
 
 #define HQ_HP_DECELEATION_1 (19.5F) // 減速度2.7[km/h/s] * 7.2
 #define HQ_HP_DECELEATION_2 (23.0F) // 減速度3.2[km/h/s] * 7.2
-#define HQ_HP_DISTANCE_BEGIN (748.0F) // パターン開始の速度は115[km/h](588+10+150)
+#define HQ_HP_DISTANCE_BEGIN (740.0F) // パターン開始の速度は115[km/h](588+10+142) //2015.5.9 szhal 係数修正
 
 #define SIGNAL_R 0 // 0
 #define SIGNAL_YY 1 // 30
@@ -280,7 +280,9 @@ public:
 		{
 			m_distLp -= def; // 残り距離を減算する
 			float pattern = speed * speed / 19.5F; // パターン速度
-			if(pattern >= m_distLp){m_result_sig = ATSEB_STOP;} // ブレーキ動作
+			//if(pattern >= m_distLp){m_result_sig = ATSEB_STOP;} // ブレーキ動作
+			//2015.5.9 szhal m_result_sigだとS点と被り緩解されるのでm_result_limでATSブレーキ動作
+			if(pattern >= m_distLp){m_result_lim = ATSEB_STOP;}
 		}
 
 		// 新A点による照査
@@ -419,7 +421,29 @@ public:
 		// 新A照査による表示灯
 		switch(m_limit)
 		{
+		//2015.5.9 szhal Limit20と20RでN表示(自動緩解)・非表示(非常制動)の区別をつけました(梅田20キロ照査の対策)
 		case LIMIT_20R:
+			if(m_signal > SIGNAL_R)
+			{
+				resetIndicator();
+				Indicator = m_hPat ? IND_R20 * blink500 : IND_20; // 20
+				Ats_HP = m_hPat ? blink500 : 0; // HP
+				Ats_R20 = m_hPat ? blink500 : 0;
+				Ats_20 = 1;
+
+				/*
+				if(m_hPat) // 高速パターン
+				{
+					resetIndicator();
+					Ats_HP = blink500 ? 1 : 0; // HP
+					Ats_R20 = blink500 ? 1 : 0;
+					Ats_20 = 1;
+					Indicator = IND_R20 * blink500;
+				}
+				*/
+			}
+			break;
+
 		case LIMIT_20:
 			if(m_signal > SIGNAL_R)
 			{
@@ -428,6 +452,7 @@ public:
 				Ats_HP = m_hPat ? blink500 : 0; // HP
 				Ats_R20 = m_hPat ? blink500 : 0;
 				Ats_20 = 1;
+				Ats_RN = 1; //2015.5.9 szhal 20R追加により20ではN表示追加
 
 				/*
 				if(m_hPat) // 高速パターン
@@ -541,7 +566,16 @@ public:
 				resetIndicator();
 				Indicator = IND_C;
 				Ats_N = 1; // N
+				Ats_HP = 0;  //2015.5.9 szhal 8300系で過走後もHPが点滅続ける対策
+
 			}
+			// 2015.5.9 szhal 8300系でN表示時にHP点滅が消えない対策
+			// N表示=HP消灯とするとHPパターン発生時の20N表示が出来なくなる為、個別に処理追加しました
+			if(m_signal == SIGNAL_N || m_signal == SIGNAL_R)
+			{
+				Ats_HP = 0;
+			}
+
 			else // 赤F
 			{
 				Ats_HP = blink500 ? 1 : 0; // HP
@@ -554,7 +588,7 @@ public:
 			m_result_sig = ATSEB_NONE;
 			resetIndicator();
 
-			if(m_flat15)
+			if(m_flat15)  //2015.5.9 szhal 入換モードの動作は嵐山線直通スジに合わせて修正予定…
 			{
 				if(speed > 15+1){m_result_sig = ATSEB_STOP;}
 
@@ -577,6 +611,8 @@ public:
 			//2015.4.29 SzHal 10m以上過走した際のATSブレーキの強制解除
 			m_hPat = 0;
 			m_result_hp = ATSEB_NONE;
+			//2015.5.9 szhal 低速パターンのATSブレーキを
+			m_result_lim = ATSEB_NONE;
 
 			resetIndicator();
 
@@ -648,23 +684,17 @@ public:
 	// ATSリセットが扱われた時に実行する
 	void reset(void)
 	{
-		if(*BrakeNotch == EmgBrake)
+		if(*BrakeNotch == EmgBrake  && *TrainSpeed <= 0) //2015.5.9 szhal 停止時操作の条件追加
 		{
 			AtsBrake = ATSEB_NONE;
-
-			// 2015.5.3 SzHaL N表示後、力行が必要な時のS標20照査解除
-			m_result_sig = ATSEB_NONE;
-			m_result_hp = ATSEB_NONE;
-			m_result_lim = ATSEB_NONE;
-			m_stepA = 0;
-			m_stepS = 0;
+			//2015.5.9 szhal N表示時の力行が不要となった為、動作内容を修正
 		}
 	}
 
 	// 確認モードが扱われた時に実行する
 	void confirm(void)
 	{
-		if(*BrakeNotch == EmgBrake)
+		if(*BrakeNotch == EmgBrake  && *TrainSpeed <= 0)//2015.5.9 szhal 停止時操作の条件追加
 		{
 			m_confirmButton = ATS_SOUND_PLAY;
 
@@ -673,11 +703,16 @@ public:
 				Confirm = 1;
 				// m_confirmBuzz = ATS_SOUND_PLAYLOOPING;
 
-				m_hPat = m_lPat = 0;
+				m_hPat = 0;
+				m_lPat = 0;
 				AtsBrake = ATSEB_NONE;
 				m_result_sig = ATSEB_NONE;
 				m_result_hp = ATSEB_NONE;
 				m_result_lim = ATSEB_NONE;
+				m_stepA = 0; 
+				m_stepS = 0;
+				//2015.5.9 szhal 動作内容修正
+
 			}
 			else
 			{
@@ -690,7 +725,8 @@ public:
 	// 入換スイッチが扱われた時に実行する
 	void replace(void)
 	{
-		if(*BrakeNotch == EmgBrake && (m_signal == SIGNAL_S || Replace)) // 入換信号か入換入のとき
+		if(*BrakeNotch == EmgBrake && (m_signal == SIGNAL_S || Replace)&& *TrainSpeed <= 0) // 入換信号か入換入のとき
+		//2015.5.9 szhal 停止時操作の条件追加
 		{
 			Replace = Replace ? 0 : 1;
 			m_replaceSw = ATS_SOUND_PLAY;
@@ -706,6 +742,7 @@ public:
 		m_stepA = 0; // 閉そく内地点の初期化
 		m_stepS = 0;
 		m_lPat = 0; // 低速パターンのリセット
+		//2015.5.9 szhal 信号直下のA点S点情報解除ビーコンは検証不十分につき今後の検討…orz
 	}
 
 	// 最高速度設定を通過した時に実行する
@@ -781,8 +818,9 @@ public:
 			case 1: // 補正用ループコイル
 				m_distHp = 122.0F; // 112[m]地点 + 10[m]余裕
 				break;
-			case 2: // 補正用ループコイル(200m)
-				m_distHp = 270.0F;
+			case 2: // 補正用ループコイル(300m)
+			//2015.5.9 szhal 補正ループコイルの距離修正。PDFの修正もお願いします(汗
+				m_distHp = 340.0F;
 				m_hpDeceleation = HQ_HP_DECELEATION_2;
 				break;
 			case 3: // 高速パターン取消
