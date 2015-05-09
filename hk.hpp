@@ -687,6 +687,9 @@ public:
 		if(*BrakeNotch == EmgBrake  && *TrainSpeed <= 0) //2015.5.9 szhal 停止時操作の条件追加
 		{
 			AtsBrake = ATSEB_NONE;
+			m_result_sig = ATSEB_NONE;
+			m_result_hp = ATSEB_NONE;
+			m_result_lim = ATSEB_NONE;
 			//2015.5.9 szhal N表示時の力行が不要となった為、動作内容を修正
 		}
 	}
