@@ -19,3 +19,4 @@ int g_deltaT; // フレーム時間[ms/frame]
 ATS_HANDLES g_output; // 出力
 
 CHk g_hk; // 阪急新型ATS
+CSub g_sub; // その他の表示や音声

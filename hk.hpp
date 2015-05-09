@@ -67,17 +67,18 @@ private:
 
 	int m_result_sig; // 信号照査の結果
 	int m_result_hp; // 高速パターンの結果
+	// int m_result_lp; // 低速パターンの結果
 	int m_result_lim; // 新A点照査の結果
 
 	int m_lpRelease; // LP解除タイマー
 	int m_lpReleaseTime; // LP解除までの時間
 
-	int m_nextBcUpdate; // BC表示更新の時刻
-
 	int m_beginPattern; // パターン発生
 	// int m_confirmBuzz; // 確認モードブザー
 	int m_replaceSw; // 入換スイッチ
 	int m_confirmButton; // 確認ボタン
+	int m_nIndicatorRelay; // N表示灯リレー
+	int m_nIndicatorRelayState; // Nリレー状態
 
 	// LP解除タイマー
 	int lpReleaseTimer()
@@ -125,8 +126,6 @@ public:
 	int *Time; // 現在時刻[s]
 	float *TrainSpeed; // 速度計の速度[km/h]
 	int *DeltaT; // フレーム時間[flame/ms]
-	float BcPressure; // ブレーキシリンダ圧力[kPa]
-	int DigitalBc[2]; // デジタルBC表示
 
 	int AtsBrake; // ATSブレーキ
 	int Route; // 事業者
@@ -161,9 +160,10 @@ public:
 	int SpeedOverBuzz; // 速度超過ブザー
 	int ReplaceSw; // 入換スイッチ
 	int ConfirmButton; // 確認ボタン
+	int NIndicatorRelay; // N表示灯リレー
 
 	// Initalizeで実行する
-	void initialize()
+	void initialize(void)
 	{
 		AtsBrake = 0;
 
@@ -189,18 +189,15 @@ public:
 		m_lpRelease = 0;
 		m_lpReleaseTime = 0;
 
-		BcPressure = 0;
-		DigitalBc[0] = 0;
-		DigitalBc[1] = 0;
-		m_nextBcUpdate = 0;
-
 		m_beginPattern = ATS_SOUND_STOP;
 		m_replaceSw = ATS_SOUND_STOP;
 		m_confirmButton = ATS_SOUND_STOP;
+		m_nIndicatorRelay = ATS_SOUND_STOP;
+		m_nIndicatorRelayState = 0;
 	}
 
 	// Elapseで実行する
-	void execute()
+	void execute(void)
 	{
 		float speed = fabsf(*TrainSpeed); // 速度の絶対値[km/h]
 		float def = *TrainSpeed / 3600 * *DeltaT; // 1フレームで動いた距離(絶対値)[m]
@@ -566,20 +563,13 @@ public:
 				resetIndicator();
 				Indicator = IND_C;
 				Ats_N = 1; // N
-				Ats_HP = 0;  //2015.5.9 szhal 8300系で過走後もHPが点滅続ける対策
-
+				// ↓Ats_HPは上のresetIndicator()で消えるので不要です 2015/05/09 unic
+				// Ats_HP = 0; //2015.5.9 szhal 8300系で過走後もHPが点滅続ける対策
 			}
+
 			// 2015.5.9 szhal 8300系でN表示時にHP点滅が消えない対策
 			// N表示=HP消灯とするとHPパターン発生時の20N表示が出来なくなる為、個別に処理追加しました
-			if(m_signal == SIGNAL_N || m_signal == SIGNAL_R)
-			{
-				Ats_HP = 0;
-			}
-
-			else // 赤F
-			{
-				Ats_HP = blink500 ? 1 : 0; // HP
-			}
+			Ats_HP = (m_signal != SIGNAL_N && m_signal != SIGNAL_R) && blink500 ? 1 : 0; // HP
 		}
 
 		// 入換モード
@@ -588,7 +578,7 @@ public:
 			m_result_sig = ATSEB_NONE;
 			resetIndicator();
 
-			if(m_flat15)  //2015.5.9 szhal 入換モードの動作は嵐山線直通スジに合わせて修正予定…
+			if(m_flat15) //2015.5.9 szhal 入換モードの動作は嵐山線直通スジに合わせて修正予定…
 			{
 				if(speed > 15+1){m_result_sig = ATSEB_STOP;}
 
@@ -625,10 +615,12 @@ public:
 			Ats_20 = 1;
 			Ats_Confirm = blink500;
 		}
+		/*
 		else
 		{
 			Ats_Confirm = 0;
 		}
+		*/
 
 		// LP解除タイマーの表示
 		if(m_lpRelease) // LP地上子からタイマーを使う設定があるとき
@@ -648,6 +640,26 @@ public:
 		// ATSブレーキに結果を更新
 		AtsBrake = maximum(maximum(m_result_sig,m_result_hp), m_result_lim);
 
+		// N表示灯の状態を見る・リレー音を鳴らす
+		switch(m_nIndicatorRelayState)
+		{
+		case 0: 
+			if(Ats_N || Ats_RN) // Ry動作時
+			{
+				m_nIndicatorRelayState = 1; // 動作状態
+				m_nIndicatorRelay = ATS_SOUND_PLAY; // 再生する
+			}
+			break;
+		case 1:
+		default:
+			if(!Ats_N && !Ats_RN) // Ry釈放時
+			{
+				m_nIndicatorRelayState = 0; // 釈放状態
+				m_nIndicatorRelay = ATS_SOUND_PLAY; // 再生する
+			}
+			break;
+		}
+
 		// 速度超過ブザー
 		SpeedOverBuzz = AtsBrake ? ATS_SOUND_PLAYLOOPING : ATS_SOUND_STOP;
 		ConfirmBuzz = Confirm ? ATS_SOUND_PLAYLOOPING : ATS_SOUND_STOP;
@@ -658,14 +670,8 @@ public:
 		m_replaceSw = ATS_SOUND_CONTINUE;
 		ConfirmButton = m_confirmButton; // 確認ボタン
 		m_confirmButton = ATS_SOUND_CONTINUE;
-
-		// BC圧デジタル表示
-		if(*Time >= m_nextBcUpdate)
-		{
-			m_nextBcUpdate = *Time + 480;
-			DigitalBc[0] = BcPressure < 100 ? 10 : BcPressure / 100; // Bc100の桁
-			DigitalBc[1] = BcPressure < 10 ? 0 : BcPressure / 10 - (DigitalBc[0] % 10) * 10; // Bc10の桁
-		}
+		NIndicatorRelay = m_nIndicatorRelay; // N表示灯リレー
+		m_nIndicatorRelay = ATS_SOUND_CONTINUE;
 	}
 
 	// ドア状態が変わった時に実行する
@@ -684,7 +690,7 @@ public:
 	// ATSリセットが扱われた時に実行する
 	void reset(void)
 	{
-		if(*BrakeNotch == EmgBrake  && *TrainSpeed <= 0) //2015.5.9 szhal 停止時操作の条件追加
+		if(*BrakeNotch == EmgBrake && *TrainSpeed == 0) //2015.5.9 szhal 停止時操作の条件追加
 		{
 			AtsBrake = ATSEB_NONE;
 			m_result_sig = ATSEB_NONE;
@@ -697,7 +703,7 @@ public:
 	// 確認モードが扱われた時に実行する
 	void confirm(void)
 	{
-		if(*BrakeNotch == EmgBrake  && *TrainSpeed <= 0)//2015.5.9 szhal 停止時操作の条件追加
+		if(*BrakeNotch == EmgBrake && *TrainSpeed == 0) //2015.5.9 szhal 停止時操作の条件追加
 		{
 			m_confirmButton = ATS_SOUND_PLAY;
 
@@ -728,7 +734,7 @@ public:
 	// 入換スイッチが扱われた時に実行する
 	void replace(void)
 	{
-		if(*BrakeNotch == EmgBrake && (m_signal == SIGNAL_S || Replace)&& *TrainSpeed <= 0) // 入換信号か入換入のとき
+		if(*BrakeNotch == EmgBrake && (m_signal == SIGNAL_S || Replace) && *TrainSpeed == 0) // 入換信号か入換入のとき
 		//2015.5.9 szhal 停止時操作の条件追加
 		{
 			Replace = Replace ? 0 : 1;
@@ -822,7 +828,6 @@ public:
 				m_distHp = 122.0F; // 112[m]地点 + 10[m]余裕
 				break;
 			case 2: // 補正用ループコイル(300m)
-			//2015.5.9 szhal 補正ループコイルの距離修正。PDFの修正もお願いします(汗
 				m_distHp = 340.0F;
 				m_hpDeceleation = HQ_HP_DECELEATION_2;
 				break;

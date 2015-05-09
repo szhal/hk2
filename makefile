@@ -1,5 +1,5 @@
 TARGET	= hk2.dll
-OBJS	= atsplugin.h Ats.h Ats.cpp hk.hpp
+OBJS	= atsplugin.h Ats.h Ats.cpp hk.hpp sub.hpp
 
 all:	$(TARGET)
 

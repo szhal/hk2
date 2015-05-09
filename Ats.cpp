@@ -1,6 +1,7 @@
 #include <windows.h>
 #include "atsplugin.h"
 #include "hk.hpp"
+#include "sub.hpp"
 #include "Ats.h"
 
 #ifdef __cplusplus
@@ -19,6 +20,8 @@ BOOL APIENTRY DllMain( HINSTANCE hModule,
 			g_hk.Time = &g_time;
 			g_hk.TrainSpeed = &g_speed;
 			g_hk.DeltaT = &g_deltaT;
+
+			g_sub.Time = &g_time;
 			break;
 
 		case DLL_THREAD_ATTACH:
@@ -59,6 +62,8 @@ ATS_API void WINAPI SetVehicleSpec(ATS_VEHICLESPEC vehicleSpec)
 ATS_API void WINAPI Initialize(int brake)
 {
 	g_hk.initialize();
+	g_sub.initialize();
+
 	g_speed = 0;
 }
 
@@ -68,13 +73,16 @@ ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int
 	g_time = vehicleState.Time;
 	g_speed = vehicleState.Speed;
 
-	g_hk.BcPressure = vehicleState.BcPressure; // BC圧力
 	g_hk.execute();
+
+	g_sub.BcPressure = vehicleState.BcPressure; // BC圧力
+	g_sub.execute();
 
 	// ハンドル出力
 	if(g_hk.AtsBrake)
 	{
 		g_output.Brake = g_emgBrake;
+		g_powerNotch = 0; // 手放し運転防止
 	}
 	else
 	{
@@ -126,8 +134,8 @@ ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int
 	panel[35] = g_hk.Ats_Confirm;
 	panel[36] = g_hk.Replace;
 
-	panel[50] = g_hk.DigitalBc[0]; // Bc100の桁
-	panel[51] = g_hk.DigitalBc[1]; // Bc10の桁
+	panel[50] = g_sub.DigitalBc[0]; // Bc100の桁
+	panel[51] = g_sub.DigitalBc[1]; // Bc10の桁
 
 	// サウンド出力
 	sound[0] = g_hk.BeginPattern; // パターン発生
@@ -135,6 +143,7 @@ ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int
 	sound[2] = g_hk.SpeedOverBuzz; // 速度超過時ブザー
 	sound[5] = g_hk.ReplaceSw; // 入換スイッチ
 	sound[6] = g_hk.ConfirmButton; // 確認ボタン
+	sound[10] = g_hk.NIndicatorRelay; // N表示灯リレー
 
 	return g_output;
 }
