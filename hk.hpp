@@ -445,7 +445,7 @@ public:
 			if(m_signal > SIGNAL_R)
 			{
 				resetIndicator();
-				Indicator = m_hPat ? IND_R20 * blink500 : IND_20; // 20
+				Indicator = m_hPat ? IND_R20L * blink500 : IND_20L; // 20
 				Ats_HP = m_hPat ? blink500 : 0; // HP
 				Ats_R20 = m_hPat ? blink500 : 0;
 				Ats_20 = 1;
