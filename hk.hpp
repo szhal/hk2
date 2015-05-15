@@ -261,11 +261,13 @@ public:
 
 			// HPは残距離119.6m未満かつ3km/h以下でリセット
 			// 2015.5.3 リセット条件を速度3km/h以下に変更と、パターン終端超えた場合は非常制動に。
-			if(m_distHp <= 10.0F)
+			//if(m_distHp <= 10.0F)
+			if(m_distHp <= 1.0F)  // 2015.5.16 szhal 終端距離修正
 			{
 				m_result_hp = ATSEB_STOP;
 			}
-			else if(m_distHp < 119.6F && m_distHp >= 10.0F && speed <= 3.0F)
+			//else if(m_distHp < 119.6F && m_distHp >= 10.0F && speed <= 3.0F)
+			else if(m_distHp < 119.6F && m_distHp >= 1.0F && speed <= 3.0F) // 2015.5.16 szhal 終端距離修正
 			{
 				m_hPat = 0;
 				m_result_hp = ATSEB_NONE; // 2015.5.5 SzHaL 高速パターンキャンセル後にブレーキ緩解せず
@@ -336,7 +338,8 @@ public:
 			}
 		case SIGNAL_YG: // 70
 			Indicator = m_hPat ? IND_R70 * blink500 : IND_70; // 70
-			Ats_70 = 1;
+			//Ats_70 = 1;
+			Ats_70 = m_hPat ? 0 : 1; // 2015.5.16 szhal
 			Ats_R70 = m_hPat ? blink500 : 0;
 
 			/*
@@ -350,7 +353,8 @@ public:
 			if(!m_stepA && !m_stepS) // A点･S点でない
 			{
 				Indicator = m_hPat ? IND_R50 * blink500 : IND_50; // 50
-				Ats_50 = 1;
+				//Ats_50 = 1;
+				Ats_50 = m_hPat ? 0 : 1; // 2015.5.16 szhal
 				Ats_R50 = m_hPat ? blink500 : 0;
 				
 				/*
@@ -365,7 +369,8 @@ public:
 			if(!m_stepS) // S点でない
 			{
 				Indicator = m_hPat ? IND_R30 * blink500 : IND_30; // 30
-				Ats_30 = 1;
+				//Ats_30 = 1;
+				Ats_30 = m_hPat ? 0 : 1; // 2015.5.16 szhal
 				Ats_R30 = m_hPat ? blink500 : 0;
 
 				/*
@@ -388,7 +393,7 @@ public:
 					{
 						Indicator = IND_R20L * blink500;
 						Ats_RN = 1;
-						Ats_20 = 1;
+						//Ats_20 = 1;  // 2015.5.16 szhal
 						Ats_R20 = blink500;
 					}
 					else // それ以外では白20(左より)点灯と赤N(右より)点灯
@@ -426,7 +431,8 @@ public:
 				Indicator = m_hPat ? IND_R20 * blink500 : IND_20; // 20
 				Ats_HP = m_hPat ? blink500 : 0; // HP
 				Ats_R20 = m_hPat ? blink500 : 0;
-				Ats_20 = 1;
+				//Ats_20 = 1;
+				Ats_20 = m_hPat ? 0 : 1; // 2015.5.16 szhal
 
 				/*
 				if(m_hPat) // 高速パターン
@@ -448,7 +454,8 @@ public:
 				Indicator = m_hPat ? IND_R20 * blink500 : IND_20; // 20
 				Ats_HP = m_hPat ? blink500 : 0; // HP
 				Ats_R20 = m_hPat ? blink500 : 0;
-				Ats_20 = 1;
+				//Ats_20 = 1;
+				Ats_20 = m_hPat ? 0 : 1; // 2015.5.16 szhal
 				Ats_RN = 1; //2015.5.9 szhal 20R追加により20ではN表示追加
 
 				/*
@@ -470,8 +477,8 @@ public:
 				Indicator = m_hPat ? IND_R30 * blink500 : IND_30; // 30
 				Ats_HP = m_hPat ? blink500 : 0; // HP
 				Ats_R30 = m_hPat ? blink500 : 0;
-				Ats_30 = 1;
-
+				//Ats_30 = 1;
+				Ats_30 = m_hPat ? 0 : 1; // 2015.5.16 szhal
 				/*
 				if(m_hPat) // 高速パターン
 				{
@@ -491,8 +498,8 @@ public:
 				Indicator = m_hPat ? IND_R50 * blink500 : IND_50; // 50
 				Ats_HP = m_hPat ? blink500 : 0; // HP
 				Ats_R50 = m_hPat ? blink500 : 0;
-				Ats_50 = 1;
-
+				//Ats_50 = 1;
+				Ats_50 = m_hPat ? 0 : 1; // 2015.5.16 szhal
 				/*
 				if(m_hPat) // 高速パターン
 				{
@@ -512,8 +519,8 @@ public:
 				Indicator = m_hPat ? IND_R70 * blink500 : IND_70; // 70
 				Ats_HP = m_hPat ? blink500 : 0; // HP
 				Ats_R70 = m_hPat ? blink500 : 0;
-				Ats_70 = 1;
-
+				//Ats_70 = 1;
+				Ats_70 = m_hPat ? 0 : 1; // 2015.5.16 szhal
 				/*
 				if(m_hPat) // 高速パターン
 				{
@@ -533,8 +540,8 @@ public:
 				Indicator = m_hPat ? IND_R80 * blink500 : IND_80; // 80
 				Ats_HP = m_hPat ? blink500 : 0; // HP
 				Ats_R80 = m_hPat ? blink500 : 0;
-				Ats_80 = 1;
-
+				//Ats_80 = 1;
+				Ats_80 = m_hPat ? 0 : 1; // 2015.5.16 szhal
 				/*
 				if(m_hPat) // 高速パターン
 				{
