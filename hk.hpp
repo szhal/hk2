@@ -281,7 +281,9 @@ public:
 			float pattern = speed * speed / 19.5F; // パターン速度
 			//if(pattern >= m_distLp){m_result_sig = ATSEB_STOP;} // ブレーキ動作
 			//2015.5.9 szhal m_result_sigだとS点と被り緩解されるのでm_result_limでATSブレーキ動作
-			if(pattern >= m_distLp){m_result_lim = ATSEB_STOP;}
+			//if(pattern >= m_distLp){m_result_lim = ATSEB_STOP;}
+			if(pattern >= m_distLp){m_result_hp = ATSEB_STOP;}
+			//2015.5.23 新A点ATSブレーキ残りと干渉するので、hpにてATSブレーキ動作へ変更
 		}
 
 		// 新A点による照査
@@ -311,6 +313,8 @@ public:
 			else{m_result_lim = ATSEB_NONE;}
 			break;
 		case LIMIT_F:
+			m_result_lim = ATSEB_NONE;
+			// 2015.5.23 szhal 新A点解除時にATSブレーキが残る対策です
 		default:
 			break;
 		}
@@ -451,7 +455,9 @@ public:
 			if(m_signal > SIGNAL_R)
 			{
 				resetIndicator();
-				Indicator = m_hPat ? IND_R20 * blink500 : IND_20; // 20
+				//Indicator = m_hPat ? IND_R20 * blink500 : IND_20; // 20
+				Indicator = m_hPat ? IND_R20L * blink500 : IND_20L; // 20
+				//2015.5.23 szhal 20Nの20が左寄せになってませんでした
 				Ats_HP = m_hPat ? blink500 : 0; // HP
 				Ats_R20 = m_hPat ? blink500 : 0;
 				//Ats_20 = 1;
@@ -565,7 +571,9 @@ public:
 		{
 			// if(!m_door || m_distHp < 10.0F) // オーバーでNに移行
 			// 2015/05/04 変更 unic ドアを見ない
-			if(m_distHp < 10.0F) // オーバーでNに移行
+			//if(m_distHp < 10.0F) // オーバーでNに移行
+			if(m_distHp < 1.0F) // オーバーでNに移行
+			//2015.5.23 szhal 表示器の判定距離に合わせて変更するの忘れてました(汗)
 			{
 				resetIndicator();
 				Indicator = IND_C;
